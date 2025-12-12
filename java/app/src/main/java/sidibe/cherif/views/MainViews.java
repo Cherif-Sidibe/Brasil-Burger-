@@ -390,5 +390,121 @@ public class MainViews {
         }
     }
 
+
+    public void afficherBurgers(List<Burger> burgers) {
+        if (burgers == null || burgers.isEmpty()) {
+            System.out.println("❌ Aucun burger trouvé.");
+            return;
+        }
+        
+        System.out.println("\n========================================");
+        System.out.println("         LISTE DES BURGERS");
+        System.out.println("========================================");
+        
+        for (Burger burger : burgers) {
+            System.out.println("ID: " + burger.getId());
+            System.out.println("Nom: " + burger.getNom());
+            System.out.println("Prix: " + burger.getPrix() + " FCFA");
+            System.out.println("Description: " + burger.getDescription());
+            System.out.println("Archivé: " + (burger.isArchive() ? "Oui" : "Non"));
+            System.out.println("----------------------------------------");
+        }
+    }
+
+    public void afficherComplements(List<Complement> complements) {
+        if (complements == null || complements.isEmpty()) {
+            System.out.println("❌ Aucun complément trouvé.");
+            return;
+        }
+        
+        System.out.println("\n========================================");
+        System.out.println("        LISTE DES COMPLÉMENTS");
+        System.out.println("========================================");
+        
+        for (Complement complement : complements) {
+            System.out.println("ID: " + complement.getId());
+            System.out.println("Nom: " + complement.getNom());
+            System.out.println("Prix: " + complement.getPrix() + " FCFA");
+            System.out.println("Type: " + complement.getTypeComplement());
+            System.out.println("Archivé: " + (complement.isArchive() ? "Oui" : "Non"));
+            System.out.println("----------------------------------------");
+        }
+    }
+
+
+    public void afficherMenus(List<Menu> menus) {
+        if (menus == null || menus.isEmpty()) {
+            System.out.println("❌ Aucun menu trouvé.");
+            return;
+        }
+        
+        System.out.println("\n========================================");
+        System.out.println("          LISTE DES MENUS");
+        System.out.println("========================================");
+        
+        for (Menu menu : menus) {
+            System.out.println("ID: " + menu.getId());
+            System.out.println("Nom: " + menu.getNom());
+            System.out.println("Prix: " + menu.getPrix() + " FCFA");
+            System.out.println("Description: " + menu.getDescription());
+            System.out.println("ID Burger: " + menu.getIdBurger());
+            System.out.println("ID Boisson: " + menu.getIdBoisson());
+            System.out.println("ID Frite: " + menu.getIdFrite());
+            System.out.println("Archivé: " + (menu.isArchive() ? "Oui" : "Non"));
+            System.out.println("----------------------------------------");
+        }
+    }
+
+
+    public void afficherZones(List<Zone> zones) {
+        if (zones == null || zones.isEmpty()) {
+            System.out.println("❌ Aucune zone de livraison trouvée.");
+            return;
+        }
+        
+        System.out.println("\n========================================");
+        System.out.println("     LISTE DES ZONES DE LIVRAISON");
+        System.out.println("========================================");
+        
+        for (Zone zone : zones) {
+            System.out.println("ID: " + zone.getId());
+            System.out.println("Nom: " + zone.getNom());
+            System.out.println("Quartiers: " + String.join(", ", zone.getQuartiers()));
+            System.out.println("Prix de livraison: " + zone.getPrixLivraison() + " FCFA");
+            System.out.println("Archivé: " + (zone.isArchive() ? "Oui" : "Non"));
+            System.out.println("----------------------------------------");
+        }
+    }
+
+    public void afficherUsers(List<User> users) {
+        if (users == null || users.isEmpty()) {
+            System.out.println("❌ Aucun utilisateur trouvé.");
+            return;
+        }
+        
+        System.out.println("\n========================================");
+        System.out.println("       LISTE DES UTILISATEURS");
+        System.out.println("========================================");
+        
+        for (User user : users) {
+            System.out.println("ID: " + user.getId());
+            System.out.println("Nom: " + user.getNom() + " " + user.getPrenom());
+            System.out.println("Email: " + user.getEmail());
+            System.out.println("Téléphone: " + user.getTelephone());
+            System.out.println("Adresse: " + user.getAdresse());
+            System.out.println("Rôle: " + user.getRole());
+            System.out.println("Archivé: " + (user.isArchive() ? "Oui" : "Non"));
+            System.out.println("----------------------------------------");
+        }
+    }
+
+    
+    public int demanderID(String entite) {
+        System.out.print("Entrez l'ID " + entite + ": ");
+        int id = scan.nextInt();
+        scan.nextLine(); 
+        return id;
+    }
+
     
 }

@@ -10,5 +10,4 @@ public interface MenuService {
     List<Menu> listerMenus();
     List<Menu> listerMenusActifs();
     Menu getMenuById(int id);
-    double calculerPrixMenu(int id);
 }

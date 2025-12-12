@@ -79,4 +79,6 @@ public class MainViews {
     public void afficherMessage(String message) {
         System.out.println(message);
     }
+
+    
 }

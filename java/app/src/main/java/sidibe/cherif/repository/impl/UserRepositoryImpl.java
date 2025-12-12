@@ -14,7 +14,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public int insert(User user) {
         String sql = "INSERT INTO \"user\" (nom, prenom, email, password, adresse, telephone, role, is_archive, created_at, updated_at) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     "VALUES (?, ?, ?, ?, ?, ?, ?::role_enum, ?, ?, ?)";
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
@@ -80,7 +80,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean update(User user) {
-        String sql = "UPDATE \"user\" SET nom = ?, prenom = ?, email = ?, password = ?, adresse = ?, telephone = ?, role = ?, is_archive = ?, updated_at = ? WHERE id = ?";
+        String sql = "UPDATE \"user\" SET nom = ?, prenom = ?, email = ?, password = ?, adresse = ?, telephone = ?, role = ?::role_enum, is_archive = ?, updated_at = ? WHERE id = ?";
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             

@@ -5,6 +5,7 @@ import sidibe.cherif.entity.*;
 import sidibe.cherif.service.BurgerService;
 import sidibe.cherif.service.ComplementService;
 import sidibe.cherif.service.MenuService;
+import sidibe.cherif.service.UserService;
 import sidibe.cherif.views.MainViews;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class Main {
         BurgerService burgerService = factory.getBurgerService();
         ComplementService complementService = factory.getComplementService();
         MenuService menuService = factory.getMenuService();
+        UserService userService = factory.getUserService();
         MainViews views = new MainViews();
 
         System.out.println("╔══════════════════════════════════════╗");
@@ -37,7 +39,7 @@ public class Main {
                     gererMenus(menuService, burgerService, complementService, views);
                     break;
                 case 4:
-                    System.out.println("Gestion des Utilisateurs sélectionnée");
+                    gererUsers(userService, views);
                     break;
                 case 5:
                     System.out.println("Gestion des Zones de Livraison sélectionnée");
@@ -391,6 +393,120 @@ public class Main {
             System.out.println("✅ Menu '" + menu.getNom() + "' archivé avec succès !\n");
         } catch (Exception e) {
             System.out.println("❌ Erreur lors de l'archivage du menu: " + e.getMessage() + "\n");
+        }
+    }
+    
+    private static void gererUsers(UserService userService, MainViews views) {
+        boolean retour = false;
+        
+        while (!retour) {
+            int choix = views.gererUtilisateurs();
+            
+            switch (choix) {
+                case 1:
+                    ajouterUser(userService, views);
+                    break;
+                case 2:
+                    listerUsers(userService, views);
+                    break;
+                case 3:
+                    modifierUser(userService, views);
+                    break;
+                case 4:
+                    supprimerUser(userService, views);
+                    break;
+                case 5:
+                    retour = true;
+                    break;
+                default:
+                    System.out.println("❌ Option invalide. Veuillez réessayer.\n");
+            }
+        }
+    }
+    
+    private static void ajouterUser(UserService userService, MainViews views) {
+        System.out.println("\n=== Ajouter un Utilisateur ===");
+        User user = views.saisirUser();
+        
+        if (user != null) {
+            int id = userService.creerUser(user);
+            if (id > 0) {
+                System.out.println("✅ Utilisateur ajouté avec succès ! (ID: " + id + ")\n");
+            } else {
+                System.out.println("❌ Erreur lors de l'ajout de l'utilisateur.\n");
+            }
+        }
+    }
+    
+    private static void listerUsers(UserService userService, MainViews views) {
+        System.out.println("\n=== Liste des Utilisateurs ===");
+        List<User> users = userService.listerUsers();
+        
+        if (users == null || users.isEmpty()) {
+            System.out.println("📋 Aucun utilisateur disponible.\n");
+        } else {
+            views.afficherUsers(users);
+        }
+    }
+    
+    private static void modifierUser(UserService userService, MainViews views) {
+        System.out.println("\n=== Modifier un Utilisateur ===");
+        
+        List<User> users = userService.listerUsers();
+        if (users == null || users.isEmpty()) {
+            System.out.println("📋 Aucun utilisateur disponible à modifier.\n");
+            return;
+        }
+        
+        views.afficherUsers(users);
+        
+        int id = views.demanderID("ID de l'utilisateur à modifier");
+        User user = userService.getUserById(id);
+        
+        if (user == null) {
+            System.out.println("❌ Utilisateur introuvable.\n");
+            return;
+        }
+        
+        System.out.println("\nUtilisateur actuel: " + user.getPrenom() + " " + user.getNom() + " (" + user.getEmail() + ")");
+        System.out.println("Entrez les nouvelles informations (laissez vide pour conserver)\n");
+        
+        User modifications = views.saisirUser();
+        if (modifications != null) {
+            modifications.setId(id);
+            try {
+                userService.modifierUser(modifications);
+                System.out.println("✅ Utilisateur modifié avec succès !\n");
+            } catch (Exception e) {
+                System.out.println("❌ Erreur lors de la modification de l'utilisateur: " + e.getMessage() + "\n");
+            }
+        }
+    }
+    
+    private static void supprimerUser(UserService userService, MainViews views) {
+        System.out.println("\n=== Supprimer un Utilisateur ===");
+        
+        List<User> users = userService.listerUsers();
+        if (users == null || users.isEmpty()) {
+            System.out.println("📋 Aucun utilisateur disponible à supprimer.\n");
+            return;
+        }
+        
+        views.afficherUsers(users);
+        
+        int id = views.demanderID("ID de l'utilisateur à supprimer");
+        User user = userService.getUserById(id);
+        
+        if (user == null) {
+            System.out.println("❌ Utilisateur introuvable.\n");
+            return;
+        }
+        
+        try {
+            userService.supprimerUser(id);
+            System.out.println("✅ Utilisateur '" + user.getPrenom() + " " + user.getNom() + "' supprimé avec succès !\n");
+        } catch (Exception e) {
+            System.out.println("❌ Erreur lors de la suppression de l'utilisateur: " + e.getMessage() + "\n");
         }
     }
 }

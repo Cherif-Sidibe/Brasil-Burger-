@@ -357,7 +357,7 @@ public class MainViews {
             }
         } while (choix != 1 && choix != 2);
         
-        return choix == 1 ? TypeComplementEnum.BOISSON : TypeComplementEnum.FRITE;
+        return choix == 1 ? TypeComplementEnum.BOISSON : TypeComplementEnum.FRITES;
     }
 
     

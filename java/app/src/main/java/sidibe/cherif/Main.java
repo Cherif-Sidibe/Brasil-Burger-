@@ -6,6 +6,7 @@ import sidibe.cherif.service.BurgerService;
 import sidibe.cherif.service.ComplementService;
 import sidibe.cherif.service.MenuService;
 import sidibe.cherif.service.UserService;
+import sidibe.cherif.service.ZoneService;
 import sidibe.cherif.views.MainViews;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class Main {
         ComplementService complementService = factory.getComplementService();
         MenuService menuService = factory.getMenuService();
         UserService userService = factory.getUserService();
+        ZoneService zoneService = factory.getZoneService();
         MainViews views = new MainViews();
 
         System.out.println("╔══════════════════════════════════════╗");
@@ -42,7 +44,7 @@ public class Main {
                     gererUsers(userService, views);
                     break;
                 case 5:
-                    System.out.println("Gestion des Zones de Livraison sélectionnée");
+                    gererZones(zoneService, views);
                     break;
                 case 6:
                     System.out.println("\n Merci d'avoir utilisé Brasil Burger. À bientôt !");
@@ -507,6 +509,120 @@ public class Main {
             System.out.println("✅ Utilisateur '" + user.getPrenom() + " " + user.getNom() + "' supprimé avec succès !\n");
         } catch (Exception e) {
             System.out.println("❌ Erreur lors de la suppression de l'utilisateur: " + e.getMessage() + "\n");
+        }
+    }
+    
+    private static void gererZones(ZoneService zoneService, MainViews views) {
+        boolean retour = false;
+        
+        while (!retour) {
+            int choix = views.gererZonesLivraison();
+            
+            switch (choix) {
+                case 1:
+                    ajouterZone(zoneService, views);
+                    break;
+                case 2:
+                    listerZones(zoneService, views);
+                    break;
+                case 3:
+                    modifierZone(zoneService, views);
+                    break;
+                case 4:
+                    supprimerZone(zoneService, views);
+                    break;
+                case 5:
+                    retour = true;
+                    break;
+                default:
+                    System.out.println("❌ Option invalide. Veuillez réessayer.\n");
+            }
+        }
+    }
+    
+    private static void ajouterZone(ZoneService zoneService, MainViews views) {
+        System.out.println("\n=== Ajouter une Zone de Livraison ===");
+        Zone zone = views.saisirZone();
+        
+        if (zone != null) {
+            int id = zoneService.creerZone(zone);
+            if (id > 0) {
+                System.out.println("✅ Zone ajoutée avec succès ! (ID: " + id + ")\n");
+            } else {
+                System.out.println("❌ Erreur lors de l'ajout de la zone.\n");
+            }
+        }
+    }
+    
+    private static void listerZones(ZoneService zoneService, MainViews views) {
+        System.out.println("\n=== Liste des Zones de Livraison ===");
+        List<Zone> zones = zoneService.listerZones();
+        
+        if (zones == null || zones.isEmpty()) {
+            System.out.println("📋 Aucune zone disponible.\n");
+        } else {
+            views.afficherZones(zones);
+        }
+    }
+    
+    private static void modifierZone(ZoneService zoneService, MainViews views) {
+        System.out.println("\n=== Modifier une Zone de Livraison ===");
+        
+        List<Zone> zones = zoneService.listerZones();
+        if (zones == null || zones.isEmpty()) {
+            System.out.println("📋 Aucune zone disponible à modifier.\n");
+            return;
+        }
+        
+        views.afficherZones(zones);
+        
+        int id = views.demanderID("ID de la zone à modifier");
+        Zone zone = zoneService.getZoneById(id);
+        
+        if (zone == null) {
+            System.out.println("❌ Zone introuvable.\n");
+            return;
+        }
+        
+        System.out.println("\nZone actuelle: " + zone.getNom() + " - " + zone.getPrixLivraison() + " FCFA");
+        System.out.println("Entrez les nouvelles informations (laissez vide pour conserver)\n");
+        
+        Zone modifications = views.saisirZone();
+        if (modifications != null) {
+            modifications.setId(id);
+            try {
+                zoneService.modifierZone(modifications);
+                System.out.println("✅ Zone modifiée avec succès !\n");
+            } catch (Exception e) {
+                System.out.println("❌ Erreur lors de la modification de la zone: " + e.getMessage() + "\n");
+            }
+        }
+    }
+    
+    private static void supprimerZone(ZoneService zoneService, MainViews views) {
+        System.out.println("\n=== Supprimer une Zone de Livraison ===");
+        
+        List<Zone> zones = zoneService.listerZones();
+        if (zones == null || zones.isEmpty()) {
+            System.out.println("📋 Aucune zone disponible à supprimer.\n");
+            return;
+        }
+        
+        views.afficherZones(zones);
+        
+        int id = views.demanderID("ID de la zone à supprimer");
+        Zone zone = zoneService.getZoneById(id);
+        
+        if (zone == null) {
+            System.out.println("❌ Zone introuvable.\n");
+            return;
+        }
+        
+        try {
+            zoneService.supprimerZone(id);
+            System.out.println("✅ Zone '" + zone.getNom() + "' supprimée avec succès !\n");
+        } catch (Exception e) {
+            System.out.println("❌ Erreur lors de la suppression de la zone: " + e.getMessage() + "\n");
         }
     }
 }

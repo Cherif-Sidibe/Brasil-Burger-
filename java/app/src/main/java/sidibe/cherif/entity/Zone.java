@@ -21,4 +21,5 @@ public class Zone {
     private boolean isArchive;
     private LocalDate createAt;
     private LocalDate updateAt;
+
 }

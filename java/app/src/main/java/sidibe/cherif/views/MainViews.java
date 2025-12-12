@@ -1,6 +1,11 @@
 package sidibe.cherif.views;
 
+import sidibe.cherif.entity.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class MainViews {
     Scanner scan = new Scanner(System.in);
@@ -78,6 +83,311 @@ public class MainViews {
 
     public void afficherMessage(String message) {
         System.out.println(message);
+    }
+
+    // ==================== MÉTHODES DE SAISIE ====================
+
+    
+    public Burger saisirBurger() {
+        scan.nextLine(); // Nettoyer le buffer
+        
+        String nom = saisirChaineNonVide("Nom du burger: ");
+        double prix = saisirPrixValide("Prix du burger: ");
+        
+        System.out.print("Description du burger: ");
+        String description = scan.nextLine();
+        
+        System.out.print("Image du burger (URL ou chemin): ");
+        String image = scan.nextLine();
+        
+        Burger burger = new Burger();
+        burger.setNom(nom);
+        burger.setPrix(prix);
+        burger.setDescription(description);
+        burger.setImage(image);
+        burger.setArchive(false);
+        burger.setCreateAt(LocalDate.now());
+        burger.setUpdateAt(LocalDate.now());
+        
+        return burger;
+    }
+
+    public Complement saisirComplement() {
+        scan.nextLine(); 
+        String nom = saisirChaineNonVide("Nom du complément: ");
+        double prix = saisirPrixValide("Prix du complément: ");
+        
+        System.out.print("Image du complément (URL ou chemin): ");
+        String image = scan.nextLine();
+        
+        TypeComplementEnum type = saisirTypeComplement();
+        
+        Complement complement = new Complement();
+        complement.setNom(nom);
+        complement.setPrix(prix);
+        complement.setImage(image);
+        complement.setTypeComplement(type);
+        complement.setArchive(false);
+        complement.setCreateAt(LocalDate.now());
+        complement.setUpdateAt(LocalDate.now());
+        
+        return complement;
+    }
+
+    
+    public Menu saisirMenu() {
+        scan.nextLine(); 
+        
+        String nom = saisirChaineNonVide("Nom du menu: ");
+        double prix = saisirPrixValide("Prix du menu: ");
+        
+        System.out.print("Description du menu: ");
+        String description = scan.nextLine();
+        
+        System.out.print("Image du menu (URL ou chemin): ");
+        String image = scan.nextLine();
+        
+        int idBurger = saisirIdPositif("ID du burger: ");
+        int idBoisson = saisirIdPositif("ID de la boisson: ");
+        int idFrite = saisirIdPositif("ID des frites: ");
+        
+        Menu menu = new Menu();
+        menu.setNom(nom);
+        menu.setPrix(prix);
+        menu.setDescription(description);
+        menu.setImage(image);
+        menu.setIdBurger(idBurger);
+        menu.setIdBoisson(idBoisson);
+        menu.setIdFrite(idFrite);
+        menu.setArchive(false);
+        menu.setCreateAt(LocalDate.now());
+        menu.setUpdateAt(LocalDate.now());
+        
+        return menu;
+    }
+
+    
+    public Zone saisirZone() {
+        scan.nextLine(); // Nettoyer le buffer
+        
+        String nom = saisirChaineNonVide("Nom de la zone: ");
+        
+        List<String> quartiers = new ArrayList<>();
+        System.out.print("Nombre de quartiers: ");
+        int nbQuartiers = scan.nextInt();
+        scan.nextLine(); 
+        
+        for (int i = 0; i < nbQuartiers; i++) {
+            String quartier = saisirChaineNonVide("Quartier " + (i + 1) + ": ");
+            quartiers.add(quartier);
+        }
+        
+        double prixLivraison = saisirPrixPositifOuZero("Prix de livraison: ");
+        
+        Zone zone = new Zone();
+        zone.setNom(nom);
+        zone.setQuartiers(quartiers);
+        zone.setPrixLivraison(prixLivraison);
+        zone.setArchive(false);
+        zone.setCreateAt(LocalDate.now());
+        zone.setUpdateAt(LocalDate.now());
+        
+        return zone;
+    }
+
+    
+    public User saisirUser() {
+        scan.nextLine(); 
+        
+        String nom = saisirChaineNonVide("Nom: ");
+        String prenom = saisirChaineNonVide("Prénom: ");
+        String email = saisirEmailValide();
+        String password = saisirChaineNonVide("Mot de passe: ");
+        
+        System.out.print("Adresse: ");
+        String adresse = scan.nextLine();
+        
+        String telephone = saisirTelephoneValide();
+        RoleEnum role = saisirRole();
+        
+        User user = new User();
+        user.setNom(nom);
+        user.setPrenom(prenom);
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setAdresse(adresse);
+        user.setTelephone(telephone);
+        user.setRole(role);
+        user.setArchive(false);
+        user.setCreateAt(LocalDate.now());
+        user.setUpdateAt(LocalDate.now());
+        
+        return user;
+    }
+
+    
+    private String saisirChaineNonVide(String message) {
+        String valeur;
+        do {
+            System.out.print(message);
+            valeur = scan.nextLine().trim();
+            if (valeur.isEmpty()) {
+                System.out.println("❌ Cette valeur ne peut pas être vide. Veuillez réessayer.");
+            }
+        } while (valeur.isEmpty());
+        return valeur;
+    }
+
+    
+    private double saisirPrixValide(String message) {
+        double prix;
+        do {
+            System.out.print(message);
+            while (!scan.hasNextDouble()) {
+                System.out.println("❌ Veuillez entrer un nombre valide.");
+                System.out.print(message);
+                scan.next();
+            }
+            prix = scan.nextDouble();
+            scan.nextLine(); // Nettoyer le buffer
+            
+            if (prix <= 0) {
+                System.out.println("❌ Le prix doit être supérieur à 0. Veuillez réessayer.");
+            }
+        } while (prix <= 0);
+        return prix;
+    }
+
+    
+    private double saisirPrixPositifOuZero(String message) {
+        double prix;
+        do {
+            System.out.print(message);
+            while (!scan.hasNextDouble()) {
+                System.out.println("❌ Veuillez entrer un nombre valide.");
+                System.out.print(message);
+                scan.next();
+            }
+            prix = scan.nextDouble();
+            scan.nextLine(); // Nettoyer le buffer
+            
+            if (prix < 0) {
+                System.out.println("❌ Le prix ne peut pas être négatif. Veuillez réessayer.");
+            }
+        } while (prix < 0);
+        return prix;
+    }
+
+    
+    private int saisirIdPositif(String message) {
+        int id;
+        do {
+            System.out.print(message);
+            while (!scan.hasNextInt()) {
+                System.out.println("❌ Veuillez entrer un nombre entier valide.");
+                System.out.print(message);
+                scan.next();
+            }
+            id = scan.nextInt();
+            scan.nextLine(); 
+            
+            if (id <= 0) {
+                System.out.println("❌ L'ID doit être supérieur à 0. Veuillez réessayer.");
+            }
+        } while (id <= 0);
+        return id;
+    }
+
+   
+    private String saisirEmailValide() {
+        Pattern emailPattern = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+        
+        String email;
+        do {
+            System.out.print("Email: ");
+            email = scan.nextLine().trim();
+            
+            if (email.isEmpty()) {
+                System.out.println("❌ L'email ne peut pas être vide. Veuillez réessayer.");
+            } else if (!emailPattern.matcher(email).matches()) {
+                System.out.println("❌ Format d'email invalide. Format attendu: exemple@domaine.com");
+            }
+        } while (email.isEmpty() || !emailPattern.matcher(email).matches());
+        
+        return email;
+    }
+
+    
+    private String saisirTelephoneValide() {
+        Pattern telephonePattern = Pattern.compile("^(\\+221|00221)?[0-9]{9,10}$");
+        
+        String telephone;
+        do {
+            System.out.print("Téléphone: ");
+            telephone = scan.nextLine().trim().replaceAll("\\s+", ""); 
+            
+            if (telephone.isEmpty()) {
+                System.out.println("❌ Le téléphone ne peut pas être vide. Veuillez réessayer.");
+            } else if (!telephonePattern.matcher(telephone).matches()) {
+                System.out.println("❌ Format de téléphone invalide. Format attendu: +221XXXXXXXXX ou XXXXXXXXXX");
+            }
+        } while (telephone.isEmpty() || !telephonePattern.matcher(telephone).matches());
+        
+        return telephone;
+    }
+
+    
+    private TypeComplementEnum saisirTypeComplement() {
+        System.out.println("Type de complément:");
+        System.out.println("1. BOISSON");
+        System.out.println("2. FRITE");
+        
+        int choix;
+        do {
+            System.out.print("Choisissez le type (1 ou 2): ");
+            while (!scan.hasNextInt()) {
+                System.out.println("❌ Veuillez entrer 1 ou 2.");
+                scan.next();
+            }
+            choix = scan.nextInt();
+            scan.nextLine(); 
+            
+            if (choix != 1 && choix != 2) {
+                System.out.println("❌ Choix invalide. Veuillez entrer 1 ou 2.");
+            }
+        } while (choix != 1 && choix != 2);
+        
+        return choix == 1 ? TypeComplementEnum.BOISSON : TypeComplementEnum.FRITE;
+    }
+
+    
+    private RoleEnum saisirRole() {
+        System.out.println("Rôle de l'utilisateur:");
+        System.out.println("1. CLIENT");
+        System.out.println("2. GESTIONNAIRE");
+        System.out.println("3. LIVREUR");
+        
+        int choix;
+        do {
+            System.out.print("Choisissez le rôle (1, 2 ou 3): ");
+            while (!scan.hasNextInt()) {
+                System.out.println("❌ Veuillez entrer un nombre valide.");
+                scan.next();
+            }
+            choix = scan.nextInt();
+            scan.nextLine(); 
+            
+            if (choix < 1 || choix > 3) {
+                System.out.println(" Choix invalide. Veuillez entrer 1, 2 ou 3.");
+            }
+        } while (choix < 1 || choix > 3);
+        
+        switch (choix) {
+            case 1: return RoleEnum.CLIENT;
+            case 2: return RoleEnum.GESTIONNAIRE;
+            case 3: return RoleEnum.LIVREUR;
+            default: return RoleEnum.CLIENT;
+        }
     }
 
     

@@ -1,6 +1,8 @@
 package sidibe.cherif.views;
 
 import sidibe.cherif.entity.*;
+import sidibe.cherif.service.BurgerService;
+import sidibe.cherif.service.ComplementService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -432,7 +434,7 @@ public class MainViews {
     }
 
 
-    public void afficherMenus(List<Menu> menus) {
+    public void afficherMenus(List<Menu> menus, BurgerService burgerService, ComplementService complementService) {
         if (menus == null || menus.isEmpty()) {
             System.out.println("❌ Aucun menu trouvé.");
             return;
@@ -447,9 +449,16 @@ public class MainViews {
             System.out.println("Nom: " + menu.getNom());
             System.out.println("Prix: " + menu.getPrix() + " FCFA");
             System.out.println("Description: " + menu.getDescription());
-            System.out.println("ID Burger: " + menu.getIdBurger());
-            System.out.println("ID Boisson: " + menu.getIdBoisson());
-            System.out.println("ID Frite: " + menu.getIdFrite());
+            
+            Burger burger = burgerService.getBurgerById(menu.getIdBurger());
+            System.out.println("Burger: " + (burger != null ? burger.getNom() : "Inconnu"));
+            
+            Complement boisson = complementService.getComplementById(menu.getIdBoisson());
+            System.out.println("Boisson: " + (boisson != null ? boisson.getNom() : "Inconnue"));
+            
+            Complement frite = complementService.getComplementById(menu.getIdFrite());
+            System.out.println("Frite: " + (frite != null ? frite.getNom() : "Inconnue"));
+            
             System.out.println("Archivé: " + (menu.isArchive() ? "Oui" : "Non"));
             System.out.println("----------------------------------------");
         }

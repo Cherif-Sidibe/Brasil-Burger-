@@ -14,7 +14,7 @@ public class ComplementRepositoryImpl implements ComplementRepository {
     @Override
     public int insert(Complement complement) {
         String sql = "INSERT INTO complement (nom, prix, image, type_complement, is_archive, created_at, updated_at) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                     "VALUES (?, ?, ?, ?::type_complement_enum, ?, ?, ?)";
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
@@ -78,7 +78,7 @@ public class ComplementRepositoryImpl implements ComplementRepository {
 
     @Override
     public boolean update(Complement complement) {
-        String sql = "UPDATE complement SET nom = ?, prix = ?, image = ?, type_complement = ?, is_archive = ?, updated_at = ? WHERE id = ?";
+        String sql = "UPDATE complement SET nom = ?, prix = ?, image = ?, type_complement = ?::type_complement_enum, is_archive = ?, updated_at = ? WHERE id = ?";
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             

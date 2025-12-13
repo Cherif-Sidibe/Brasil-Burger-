@@ -7,6 +7,7 @@ import sidibe.cherif.service.ComplementService;
 import sidibe.cherif.service.MenuService;
 import sidibe.cherif.service.UserService;
 import sidibe.cherif.service.ZoneService;
+import sidibe.cherif.service.ImageService;
 import sidibe.cherif.views.MainViews;
 
 import java.util.List;
@@ -19,7 +20,8 @@ public class Main {
         MenuService menuService = factory.getMenuService();
         UserService userService = factory.getUserService();
         ZoneService zoneService = factory.getZoneService();
-        MainViews views = new MainViews();
+        ImageService imageService = factory.getImageService();
+        MainViews views = new MainViews(imageService);
 
         System.out.println("╔══════════════════════════════════════╗");
         System.out.println("║   BIENVENUE CHEZ BRASIL BURGER       ║");

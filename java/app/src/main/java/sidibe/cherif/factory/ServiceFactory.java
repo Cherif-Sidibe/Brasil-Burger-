@@ -21,6 +21,7 @@ public class ServiceFactory {
     private ComplementService complementService;
     private ZoneService zoneService;
     private UserService userService;
+    private ImageService imageService;
     
     
     private ServiceFactory() {
@@ -52,6 +53,7 @@ public class ServiceFactory {
         complementService = new ComplementServiceImpl(complementRepository);
         zoneService = new ZoneServiceImpl(zoneRepository);
         userService = new UserServiceImpl(userRepository);
+        imageService = new ImageServiceImpl();
     }
     
     
@@ -73,6 +75,10 @@ public class ServiceFactory {
     
     public UserService getUserService() {
         return userService;
+    }
+    
+    public ImageService getImageService() {
+        return imageService;
     }
     
     

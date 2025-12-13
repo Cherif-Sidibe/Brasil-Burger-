@@ -3,6 +3,7 @@ package sidibe.cherif.views;
 import sidibe.cherif.entity.*;
 import sidibe.cherif.service.BurgerService;
 import sidibe.cherif.service.ComplementService;
+import sidibe.cherif.service.ImageService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,12 @@ import java.util.regex.Pattern;
 
 public class MainViews {
     Scanner scan = new Scanner(System.in);
+    private ImageService imageService;
+    
+    public MainViews(ImageService imageService) {
+        this.imageService = imageService;
+    }
+    
     public int afficherMenuPrincipal() {
         System.out.println("=== Menu Principal ===");
         System.out.println("1. Gérer les Burgers");
@@ -99,14 +106,24 @@ public class MainViews {
         System.out.print("Description du burger: ");
         String description = scan.nextLine();
         
-        System.out.print("Image du burger (URL ou chemin): ");
-        String image = scan.nextLine();
+        System.out.print("Chemin de l'image du burger: ");
+        String cheminImage = scan.nextLine();
+        
+        // Upload vers Cloudinary
+        String imageUrl = null;
+        if (cheminImage != null && !cheminImage.trim().isEmpty()) {
+            System.out.println("📎 Upload de l'image en cours...");
+            imageUrl = imageService.uploadImage(cheminImage, "burgers");
+            if (imageUrl == null) {
+                System.out.println("⚠️ L'image n'a pas pu être uploadée. Continuer sans image.");
+            }
+        }
         
         Burger burger = new Burger();
         burger.setNom(nom);
         burger.setPrix(prix);
         burger.setDescription(description);
-        burger.setImage(image);
+        burger.setImage(imageUrl);
         burger.setArchive(false);
         burger.setCreateAt(LocalDate.now());
         burger.setUpdateAt(LocalDate.now());
@@ -119,15 +136,25 @@ public class MainViews {
         String nom = saisirChaineNonVide("Nom du complément: ");
         double prix = saisirPrixValide("Prix du complément: ");
         
-        System.out.print("Image du complément (URL ou chemin): ");
-        String image = scan.nextLine();
+        System.out.print("Chemin de l'image du complément: ");
+        String cheminImage = scan.nextLine();
+        
+        // Upload vers Cloudinary
+        String imageUrl = null;
+        if (cheminImage != null && !cheminImage.trim().isEmpty()) {
+            System.out.println("📎 Upload de l'image en cours...");
+            imageUrl = imageService.uploadImage(cheminImage, "complements");
+            if (imageUrl == null) {
+                System.out.println("⚠️ L'image n'a pas pu être uploadée. Continuer sans image.");
+            }
+        }
         
         TypeComplementEnum type = saisirTypeComplement();
         
         Complement complement = new Complement();
         complement.setNom(nom);
         complement.setPrix(prix);
-        complement.setImage(image);
+        complement.setImage(imageUrl);
         complement.setTypeComplement(type);
         complement.setArchive(false);
         complement.setCreateAt(LocalDate.now());
@@ -146,8 +173,18 @@ public class MainViews {
         System.out.print("Description du menu: ");
         String description = scan.nextLine();
         
-        System.out.print("Image du menu (URL ou chemin): ");
-        String image = scan.nextLine();
+        System.out.print("Chemin de l'image du menu: ");
+        String cheminImage = scan.nextLine();
+        
+        // Upload vers Cloudinary
+        String imageUrl = null;
+        if (cheminImage != null && !cheminImage.trim().isEmpty()) {
+            System.out.println("📎 Upload de l'image en cours...");
+            imageUrl = imageService.uploadImage(cheminImage, "menus");
+            if (imageUrl == null) {
+                System.out.println("⚠️ L'image n'a pas pu être uploadée. Continuer sans image.");
+            }
+        }
         
         int idBurger = saisirIdPositif("ID du burger: ");
         int idBoisson = saisirIdPositif("ID de la boisson: ");
@@ -157,7 +194,7 @@ public class MainViews {
         menu.setNom(nom);
         menu.setPrix(prix);
         menu.setDescription(description);
-        menu.setImage(image);
+        menu.setImage(imageUrl);
         menu.setIdBurger(idBurger);
         menu.setIdBoisson(idBoisson);
         menu.setIdFrite(idFrite);

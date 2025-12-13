@@ -17,6 +17,7 @@ public class ImageServiceImpl implements ImageService {
     }
     
     @Override
+    @SuppressWarnings("unchecked")
     public String uploadImage(String cheminFichier, String dossier) {
         try {
             File fichier = new File(cheminFichier);
@@ -44,6 +45,7 @@ public class ImageServiceImpl implements ImageService {
         }
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public boolean deleteImage(String imageUrl) {
         if (imageUrl == null || !imageUrl.contains("cloudinary.com")) {

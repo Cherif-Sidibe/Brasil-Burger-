@@ -93,12 +93,9 @@ public class MainViews {
     public void afficherMessage(String message) {
         System.out.println(message);
     }
-
-    // ==================== MÉTHODES DE SAISIE ====================
-
     
     public Burger saisirBurger() {
-        scan.nextLine(); // Nettoyer le buffer
+        scan.nextLine(); 
         
         String nom = saisirChaineNonVide("Nom du burger: ");
         double prix = saisirPrixValide("Prix du burger: ");
@@ -109,7 +106,6 @@ public class MainViews {
         System.out.print("Chemin de l'image du burger: ");
         String cheminImage = scan.nextLine();
         
-        // Upload vers Cloudinary
         String imageUrl = null;
         if (cheminImage != null && !cheminImage.trim().isEmpty()) {
             System.out.println("📎 Upload de l'image en cours...");
@@ -139,7 +135,6 @@ public class MainViews {
         System.out.print("Chemin de l'image du complément: ");
         String cheminImage = scan.nextLine();
         
-        // Upload vers Cloudinary
         String imageUrl = null;
         if (cheminImage != null && !cheminImage.trim().isEmpty()) {
             System.out.println("📎 Upload de l'image en cours...");
@@ -176,7 +171,6 @@ public class MainViews {
         System.out.print("Chemin de l'image du menu: ");
         String cheminImage = scan.nextLine();
         
-        // Upload vers Cloudinary
         String imageUrl = null;
         if (cheminImage != null && !cheminImage.trim().isEmpty()) {
             System.out.println("📎 Upload de l'image en cours...");
@@ -207,7 +201,7 @@ public class MainViews {
 
     
     public Zone saisirZone() {
-        scan.nextLine(); // Nettoyer le buffer
+        scan.nextLine(); 
         
         String nom = saisirChaineNonVide("Nom de la zone: ");
         
@@ -288,7 +282,7 @@ public class MainViews {
                 scan.next();
             }
             prix = scan.nextDouble();
-            scan.nextLine(); // Nettoyer le buffer
+            scan.nextLine(); 
             
             if (prix <= 0) {
                 System.out.println("❌ Le prix doit être supérieur à 0. Veuillez réessayer.");
@@ -308,7 +302,7 @@ public class MainViews {
                 scan.next();
             }
             prix = scan.nextDouble();
-            scan.nextLine(); // Nettoyer le buffer
+            scan.nextLine(); 
             
             if (prix < 0) {
                 System.out.println("❌ Le prix ne peut pas être négatif. Veuillez réessayer.");

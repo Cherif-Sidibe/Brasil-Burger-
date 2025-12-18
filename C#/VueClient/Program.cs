@@ -13,7 +13,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// Désactiver la redirection HTTPS pour Render (qui gère HTTPS en amont)
+// app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();

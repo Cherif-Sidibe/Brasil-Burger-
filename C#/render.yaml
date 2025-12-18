@@ -2,6 +2,7 @@ services:
   - type: web
     name: brasil-burger-client
     runtime: docker
+    rootDir: C#
     dockerfilePath: ./Dockerfile
     dockerContext: ./
     envVars:

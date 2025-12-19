@@ -23,14 +23,12 @@ public class Commande
     public decimal MontantTotal { get; set; }
 
     [Required]
-    [StringLength(50)]
     [Column("etat_commande")]
-    public string EtatCommande { get; set; } = "EN_ATTENTE";
+    public EtatCommandeEnum EtatCommande { get; set; } = EtatCommandeEnum.EN_ATTENTE;
 
     [Required]
-    [StringLength(50)]
     [Column("type_livraison")]
-    public string TypeLivraison { get; set; } = string.Empty;
+    public TypeLivraisonEnum TypeLivraison { get; set; }
 
     [Column("adresse_livraison", TypeName = "text")]
     public string? AdresseLivraison { get; set; }

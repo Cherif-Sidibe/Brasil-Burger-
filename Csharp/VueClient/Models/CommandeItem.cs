@@ -16,9 +16,8 @@ public class DetailCommande
     public int IdCommande { get; set; }
 
     [Required]
-    [StringLength(50)]
     [Column("type_article")]
-    public string TypeArticle { get; set; } = string.Empty;
+    public TypeArticleEnum TypeArticle { get; set; }
 
     [Required]
     [Column("id_article")]

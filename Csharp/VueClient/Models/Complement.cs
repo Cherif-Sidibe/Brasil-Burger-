@@ -16,9 +16,8 @@ public class Complement
     public string Nom { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(50)]
     [Column("type_complement")]
-    public string TypeComplement { get; set; } = string.Empty;
+    public TypeComplementEnum TypeComplement { get; set; }
 
     [Column("description", TypeName = "text")]
     public string? Description { get; set; }

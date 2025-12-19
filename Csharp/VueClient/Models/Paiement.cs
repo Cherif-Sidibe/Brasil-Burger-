@@ -23,14 +23,12 @@ public class Paiement
     public decimal Montant { get; set; }
 
     [Required]
-    [StringLength(50)]
     [Column("methode_paiement")]
-    public string MethodePaiement { get; set; } = string.Empty;
+    public MethodePaiementEnum MethodePaiement { get; set; }
 
     [Required]
-    [StringLength(50)]
     [Column("statut_paiement")]
-    public string StatutPaiement { get; set; } = "EN_ATTENTE";
+    public StatutPaiementEnum StatutPaiement { get; set; } = StatutPaiementEnum.EN_ATTENTE;
 
     [StringLength(100)]
     [Column("reference_transaction")]

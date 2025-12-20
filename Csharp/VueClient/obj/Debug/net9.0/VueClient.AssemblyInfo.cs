@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VueClient")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aab3135e4047bab0dc241578f656202e49f834a9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ecfbe7c68e5d3b18b94f0887eb1e09996f6fb1e")]
 [assembly: System.Reflection.AssemblyProductAttribute("VueClient")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VueClient")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -16,6 +16,7 @@ public class CommandeService : ICommandeService
     }
 
     public async Task<int> CreerCommandeAsync(
+        int idClient,
         TypeLivraisonEnum typeLivraison,
         int? idZone,
         string? adresseLivraison,
@@ -51,13 +52,10 @@ public class CommandeService : ICommandeService
 
         var montantTotal = sousTotal + fraisLivraison;
 
-        // Utiliser un ID client par défaut pour les tests (sans authentification)
-        const int idClientTest = 1;
-
         // Créer la commande
         var commande = new Commande
         {
-            IdClient = idClientTest,
+            IdClient = idClient,
             DateCommande = DateTime.UtcNow,
             MontantTotal = montantTotal,
             EtatCommande = EtatCommandeEnum.EN_ATTENTE,

@@ -39,9 +39,8 @@ public class User
     public string? Adresse { get; set; }
 
     [Required]
-    [StringLength(20)]
     [Column("role")]
-    public string Role { get; set; } = "CLIENT";
+    public RoleEnum Role { get; set; } = RoleEnum.CLIENT;
 
     [Column("is_archive")]
     public bool IsArchive { get; set; } = false;

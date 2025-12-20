@@ -7,12 +7,14 @@ public interface ICommandeService
     /// <summary>
     /// Crée une nouvelle commande à partir du panier
     /// </summary>
+    /// <param name="idClient">ID du client connecté</param>
     /// <param name="typeLivraison">Type de livraison (SUR_PLACE, A_EMPORTER, LIVRAISON)</param>
     /// <param name="idZone">ID de la zone (obligatoire si LIVRAISON)</param>
     /// <param name="adresseLivraison">Adresse de livraison (optionnelle)</param>
     /// <param name="methodePaiement">Méthode de paiement</param>
     /// <returns>L'ID de la commande créée</returns>
     Task<int> CreerCommandeAsync(
+        int idClient,
         TypeLivraisonEnum typeLivraison,
         int? idZone,
         string? adresseLivraison,

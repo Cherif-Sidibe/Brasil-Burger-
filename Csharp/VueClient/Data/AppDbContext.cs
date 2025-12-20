@@ -24,6 +24,7 @@ public class AppDbContext : DbContext
 
         // Déclarer les enums PostgreSQL pour EF Core (requis avec Npgsql 8.0+)
         // MapEnum dans Program.cs configure Npgsql, HasPostgresEnum configure EF Core
+        modelBuilder.HasPostgresEnum<RoleEnum>("public", "role_enum");
         modelBuilder.HasPostgresEnum<TypeComplementEnum>("public", "type_complement_enum");
         modelBuilder.HasPostgresEnum<EtatCommandeEnum>("public", "etat_commande_enum");
         modelBuilder.HasPostgresEnum<TypeLivraisonEnum>("public", "type_livraison_enum");
@@ -35,6 +36,8 @@ public class AppDbContext : DbContext
         {
             entity.HasIndex(e => e.Email).IsUnique();
             entity.HasIndex(e => e.Telephone).IsUnique();
+
+            // Le mapping de RoleEnum est géré par HasPostgresEnum ci-dessus
 
             entity.HasMany(e => e.Commandes)
                 .WithOne(e => e.Client)

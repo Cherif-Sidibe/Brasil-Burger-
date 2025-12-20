@@ -1,17 +1,20 @@
 ﻿<!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Brasil Burger</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/catalogue.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
+
 <body>
     <header class="header">
         <div class="header-container">
@@ -25,51 +28,59 @@
             </button>
 
             <nav class="nav-menu" id="navMenu">
-                <a asp-controller="Catalogue" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Catalogue" ? "active" : "")">
+                <a asp-controller="Catalogue" asp-action="Index"
+                    class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Catalogue" ? "active" : "")">
                     <i class="bi bi-grid-3x3-gap"></i> Menu
                 </a>
-                <a asp-controller="Commande" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Commande" ? "active" : "")">
+                <a asp-controller="Commande" asp-action="Index"
+                    class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Commande" ? "active" : "")">
                     <i class="bi bi-receipt"></i> Commande
                 </a>
             </nav>
 
             <div class="nav-icons">
-                <button class="icon-btn" onclick="window.location.href='@Url.Action("Index", "Panier")'" style="position: relative;">
+                <button class="icon-btn" onclick="window.location.href='@Url.Action("Index", "Panier")'"
+                    style="position: relative;">
                     <i class="bi bi-cart3"></i>
                     <span id="cart-badge" class="cart-badge" style="display: none;">0</span>
                 </button>
-                <div class="dropdown">
-                    <button class="account-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-person-circle"></i> Mon Compte
-                        <i class="bi bi-caret-down-fill"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                            <a asp-controller="Profil" asp-action="Index" class="dropdown-item">
-                                <i class="bi bi-person"></i>
-                                <span>Mon Profil</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="Commande" asp-action="MesCommandes" class="dropdown-item">
-                                <i class="bi bi-receipt"></i>
-                                <span>Mes Commandes</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="Panier" asp-action="Index" class="dropdown-item">
-                                <i class="bi bi-cart3"></i>
-                                <span>Mon Panier</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="Auth" asp-action="Logout" class="dropdown-item">
-                                <i class="bi bi-box-arrow-right"></i>
-                                <span>Déconnexion</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                @if (User.Identity?.IsAuthenticated != true)
+                {
+                    <a href="/Account/Login" class="btn btn-outline-light ms-2">Connexion</a>
+                    <a href="/Account/Register" class="btn btn-warning ms-2">Inscription</a>
+                }
+                else
+                {
+                    <div class="dropdown">
+                        <button class="account-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> @(User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "Mon Compte")
+                            <i class="bi bi-caret-down-fill"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a asp-controller="Commande" asp-action="MesCommandes" class="dropdown-item">
+                                    <i class="bi bi-receipt"></i>
+                                    <span>Mes Commandes</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Panier" asp-action="Index" class="dropdown-item">
+                                    <i class="bi bi-cart3"></i>
+                                    <span>Mon Panier</span>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form asp-controller="Account" asp-action="Logout" method="post" style="display: inline;">
+                                    <button type="submit" class="dropdown-item" style="border: none; background: none; width: 100%; text-align: left; padding: 0.5rem 1rem;">
+                                        <i class="bi bi-box-arrow-right"></i>
+                                        <span>Déconnexion</span>
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                }
             </div>
         </div>
     </header>
@@ -112,7 +123,7 @@
         // Toast notification system
         function showToast(message, type = 'success') {
             const toastContainer = document.getElementById('toast-container');
-            
+
             const toast = document.createElement('div');
             toast.className = `toast-notification toast-${type}`;
             toast.innerHTML = `
@@ -124,12 +135,12 @@
                     <i class="bi bi-x"></i>
                 </button>
             `;
-            
+
             toastContainer.appendChild(toast);
-            
+
             // Animation d'entrée
             setTimeout(() => toast.classList.add('show'), 10);
-            
+
             // Auto-suppression après 3 secondes
             setTimeout(() => {
                 toast.classList.remove('show');
@@ -139,16 +150,16 @@
 
         // Afficher les messages TempData
         @if (TempData["SuccessMessage"] != null)
-        {
-            <text>
-            showToast('@TempData["SuccessMessage"]', 'success');
-            </text>
+            {
+                <text>
+                    showToast('@TempData["SuccessMessage"]', 'success');
+                </text>
         }
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <text>
-            showToast('@TempData["ErrorMessage"]', 'error');
-            </text>
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <text>
+                    showToast('@TempData["ErrorMessage"]', 'error');
+                </text>
         }
     </script>
     <style>
@@ -238,25 +249,26 @@
         }
     </style>
     <script>
-        // Fonction pour mettre à jour le badge du panier
-        function updateCartBadge() {
-            fetch('@Url.Action("ObtenirNombreArticles", "Panier")')
-                .then(response => response.json())
-                .then(data => {
-                    const badge = document.getElementById('cart-badge');
-                    if (data.nombre > 0) {
-                        badge.textContent = data.nombre;
-                        badge.style.display = 'flex';
-                    } else {
-                        badge.style.display = 'none';
-                    }
-                })
-                .catch(error => console.error('Erreur lors de la mise à jour du badge:', error));
-        }
+            // Fonction pour mettre à jour le badge du panier
+            function updateCartBadge() {
+                fetch('@Url.Action("ObtenirNombreArticles", "Panier")')
+                    .then(response => response.json())
+                    .then(data => {
+                        const badge = document.getElementById('cart-badge');
+                        if (data.nombre > 0) {
+                            badge.textContent = data.nombre;
+                            badge.style.display = 'flex';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    })
+                    .catch(error => console.error('Erreur lors de la mise à jour du badge:', error));
+            }
 
         // Mettre à jour le badge au chargement de la page
         document.addEventListener('DOMContentLoaded', updateCartBadge);
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>

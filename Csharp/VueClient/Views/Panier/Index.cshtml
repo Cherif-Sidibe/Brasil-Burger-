@@ -573,13 +573,28 @@
                     </div>
                 </div>
 
-                <form method="post" asp-controller="Commande" asp-action="ConfirmerCommande" id="checkoutForm">
-                    <input type="hidden" name="typeLivraison" id="typeLivraisonInput" value="@ViewBag.TypeLivraison" />
-                    <input type="hidden" name="idZone" id="idZoneInput" value="@ViewBag.IdZoneSelectionnee" />
-                    <button type="submit" class="btn-checkout">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a href="@Url.Action("ConfirmerCommande", "Commande", new { typeLivraison = ViewBag.TypeLivraison, idZone = ViewBag.IdZoneSelectionnee })" class="btn-checkout" style="text-align: center; text-decoration: none; display: block;">
                         Procéder Au Paiement
-                    </button>
-                </form>
+                    </a>
+                }
+                else
+                {
+                    <div class="alert alert-warning" style="background-color: rgba(255, 193, 7, 0.1); border: 2px solid #ffc107; color: #ffc107; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <strong>Connexion requise</strong>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">Vous devez être connecté pour procéder au paiement.</p>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="@Url.Action("Login", "Account", new { returnUrl = Url.Action("ConfirmerCommande", "Commande", new { typeLivraison = ViewBag.TypeLivraison, idZone = ViewBag.IdZoneSelectionnee }) })" class="btn-checkout" style="flex: 1; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-box-arrow-in-right me-2"></i> Se connecter
+                        </a>
+                        <a href="@Url.Action("Register", "Account")" class="btn-checkout" style="flex: 1; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; background-color: rgba(255, 193, 7, 0.2); border-color: #ffc107;">
+                            <i class="bi bi-person-plus me-2"></i> Créer un compte
+                        </a>
+                    </div>
+                }
             </div>
         </div>
     }

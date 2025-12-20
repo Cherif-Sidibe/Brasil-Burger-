@@ -1,0 +1,354 @@
+@model dynamic
+@{
+    ViewData["Title"] = "Connexion";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brasil Burger - Connexion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" />
+    <style>
+        :root {
+            --brasil-yellow: #ffc107;
+            --brasil-dark: #000000;
+            --brasil-gray: #0f0f0f;
+            --brasil-gold: #ffb800;
+            --client-primary: #ffc107;
+            --client-text: #1a1a1a;
+            --client-text-light: #6b7280;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .login-wrapper {
+            height: 100vh;
+            display: flex;
+        }
+
+        .login-left {
+            flex: 1;
+            background: linear-gradient(135deg, var(--brasil-dark) 0%, #1a1a1a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-left::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("https://images.unsplash.com/photo-1550547660-d9450f859349?w=800");
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .login-left-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .logo-container {
+            margin-bottom: 2rem;
+        }
+
+        .brand-title {
+            font-size: 5rem;
+            margin-bottom: 0;
+            color: white;
+            font-weight: 900;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .brand-subtitle {
+            font-size: 2.5rem;
+            margin-top: -0.5rem;
+            color: var(--brasil-yellow);
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .brand-tagline {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            color: white;
+        }
+
+        .login-description {
+            margin-top: 2rem;
+            max-width: 400px;
+        }
+
+        .login-description h3 {
+            color: var(--brasil-yellow);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .login-description p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+
+        .features-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .features-list li {
+            padding: 0.5rem 0;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .features-list i {
+            color: var(--brasil-yellow);
+            margin-right: 0.75rem;
+            font-size: 1.3rem;
+        }
+
+        .login-right {
+            flex: 1;
+            background-color: var(--brasil-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .login-form-container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .form-label-client {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control-client {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            color: white;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+        }
+
+        .form-control-client:focus {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-color: var(--brasil-yellow);
+            color: white;
+            box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+        }
+
+        .form-control-client::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-primary-client {
+            background: linear-gradient(135deg, var(--brasil-yellow) 0%, var(--brasil-gold) 100%);
+            border: none;
+            color: #000;
+            font-weight: 700;
+            padding: 0.75rem;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary-client:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
+            color: #000;
+        }
+
+        .btn-outline-client {
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 50px;
+            padding: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .btn-outline-client:hover {
+            border-color: var(--brasil-yellow);
+            background-color: rgba(255, 215, 0, 0.1);
+            color: var(--brasil-yellow);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .divider span {
+            padding: 0 1rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.875rem;
+        }
+
+        @@media (max-width: 992px) {
+            .login-wrapper {
+                flex-direction: column;
+            }
+
+            .login-left {
+                min-height: 40vh;
+            }
+
+            .login-right {
+                min-height: 60vh;
+            }
+
+            .login-left .brand-title {
+                font-size: 3rem;
+            }
+
+            .login-left .brand-subtitle {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <!-- Partie gauche - Logo et description -->
+        <div class="login-left">
+            <div class="login-left-content">
+                <div class="logo-container">
+                    <h1 class="brand-title">Brasil</h1>
+                    <h2 class="brand-subtitle">BURGER</h2>
+                    <p class="brand-tagline">TRÈS DÉLICIEUX!</p>
+                </div>
+                <div class="login-description">
+                    <h3>Bienvenue chez Brasil Burger</h3>
+                    <p>
+                        Découvrez nos burgers gourmands préparés avec amour et des
+                        ingrédients frais. Commandez en ligne et profitez d'une expérience
+                        culinaire inoubliable.
+                    </p>
+                    <ul class="features-list">
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i> Livraison rapide à
+                            domicile
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i> Paiement sécurisé en
+                            ligne
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i> Menus et offres
+                            exclusives
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i> Programme de fidélité
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Partie droite - Formulaire de connexion -->
+        <div class="login-right">
+            <div class="login-form-container">
+                <h2 style="color: white; font-weight: 800; font-size: 2rem; margin-bottom: 0.5rem;">
+                    Connexion
+                </h2>
+                <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 2rem; font-size: 1.1rem;">
+                    Bon retour parmi nous ! 👋
+                </p>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger">
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <div>@error.ErrorMessage</div>
+                        }
+                    </div>
+                }
+                <form asp-action="Login" asp-controller="Account" method="post" id="formConnexion">
+                    <div class="mb-3">
+                        <label for="emailConnexion" class="form-label-client">
+                            <i class="bi bi-envelope-fill"></i> Adresse email
+                        </label>
+                        <input type="email" class="form-control form-control-client" id="emailConnexion" name="emailConnexion" placeholder="votre@email.com" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="passwordConnexion" class="form-label-client">
+                            <i class="bi bi-lock-fill"></i> Mot de passe
+                        </label>
+                        <input type="password" class="form-control form-control-client" id="passwordConnexion" name="passwordConnexion" placeholder="••••••••" required />
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe" style="border-color: var(--brasil-yellow)" />
+                            <label class="form-check-label" for="rememberMe" style="color: rgba(255, 255, 255, 0.8); font-weight: 600">
+                                Se souvenir de moi
+                            </label>
+                        </div>
+                        <a href="#" class="text-decoration-none" style="color: var(--brasil-yellow); font-weight: 600">
+                            Mot de passe oublié ?
+                        </a>
+                    </div>
+                    <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+                    <button type="submit" class="btn btn-primary-client w-100 mb-3">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                    </button>
+                </form>
+                <div style="position: relative; text-align: center; margin: 2rem 0">
+                    <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255, 215, 0, 0.3);"></div>
+                    <span style="position: relative; background: var(--brasil-gray); padding: 0 1rem; color: rgba(255, 255, 255, 0.5); font-weight: 600;">OU</span>
+                </div>
+                <button class="btn btn-outline-client w-100 mb-2" style="background: rgba(255, 255, 255, 0.1)">
+                    <i class="bi bi-google me-2" style="color: #db4437"></i>Continuer avec Google
+                </button>
+                <button class="btn btn-outline-client w-100 mb-3" style="background: rgba(255, 255, 255, 0.1); border-color: #1877f2">
+                    <i class="bi bi-facebook me-2" style="color: #1877f2"></i>Continuer avec Facebook
+                </button>
+                <div class="text-center mt-4">
+                    <p style="color: rgba(255, 255, 255, 0.7); font-size: 1rem">
+                        Vous n'avez pas de compte ?
+                        <a href="/Account/Register" style="color: var(--brasil-yellow); text-decoration: none; font-weight: 700;">
+                            S'inscrire maintenant
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

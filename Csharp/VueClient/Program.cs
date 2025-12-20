@@ -5,6 +5,7 @@ using VueClient.Services.Impl;
 using Npgsql;
 using Npgsql.NameTranslation;
 using VueClient.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,7 @@ var connectionString = "Host=ep-quiet-silence-ae71zpqr-pooler.c-2.us-east-2.aws.
 var nameTranslator = new NpgsqlNullNameTranslator();
 
 // Mapper les enums C# vers les enums PostgreSQL natifs (Npgsql 7.x style)
+NpgsqlConnection.GlobalTypeMapper.MapEnum<RoleEnum>("role_enum", nameTranslator);
 NpgsqlConnection.GlobalTypeMapper.MapEnum<TypeComplementEnum>("type_complement_enum", nameTranslator);
 NpgsqlConnection.GlobalTypeMapper.MapEnum<EtatCommandeEnum>("etat_commande_enum", nameTranslator);
 NpgsqlConnection.GlobalTypeMapper.MapEnum<TypeLivraisonEnum>("type_livraison_enum", nameTranslator);
@@ -39,6 +41,15 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICatalogueService, CatalogueService>();
 builder.Services.AddScoped<IPanierService, PanierService>();
 builder.Services.AddScoped<ICommandeService, CommandeService>();
+builder.Services.AddScoped<CustomAuthService>();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/Login";
+    });
 
 builder.Services.AddControllersWithViews();
 
@@ -57,6 +68,7 @@ if (!app.Environment.IsDevelopment())
 app.UseRouting();
 
 app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

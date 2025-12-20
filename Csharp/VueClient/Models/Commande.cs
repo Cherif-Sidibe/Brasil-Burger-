@@ -28,7 +28,7 @@ public class Commande
 
     [Required]
     [Column("type_livraison")]
-    public TypeLivraisonEnum TypeLivraison { get; set; }
+    public TypeLivraisonEnum TypeLivraison { get; set; } = TypeLivraisonEnum.SUR_PLACE;
 
     [Column("adresse_livraison", TypeName = "text")]
     public string? AdresseLivraison { get; set; }

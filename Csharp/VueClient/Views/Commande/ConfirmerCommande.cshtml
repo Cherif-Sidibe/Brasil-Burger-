@@ -1,0 +1,398 @@
+@{
+    ViewData["Title"] = "Paiement";
+    var panier = ViewBag.Panier as List<VueClient.ViewModels.PanierItem> ?? new List<VueClient.ViewModels.PanierItem>();
+    var sousTotal = ViewBag.SousTotal ?? 0m;
+    var fraisLivraison = ViewBag.FraisLivraison ?? 0m;
+    var total = ViewBag.Total ?? 0m;
+    var typeLivraison = ViewBag.TypeLivraison;
+    var idZone = ViewBag.IdZone;
+    
+    string typeLivraisonText = typeLivraison?.ToString() switch
+    {
+        "SUR_PLACE" => "Sur place",
+        "A_RECUPERER" => "À emporter",
+        "A_LIVRER" => "Livraison",
+        _ => "Sur place"
+    };
+}
+
+<link rel="stylesheet" href="~/css/catalogue.css" />
+
+<style>
+    :root {
+        --brasil-yellow: #ffc107;
+        --brasil-dark: #000000;
+        --brasil-gray: #0f0f0f;
+        --brasil-gray-light: #1a1a1a;
+        --brasil-gold: #ffb800;
+    }
+
+    .main-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--brasil-yellow);
+        margin-bottom: 2rem;
+    }
+
+    .payment-layout {
+        display: grid;
+        grid-template-columns: 1fr 450px;
+        gap: 2rem;
+    }
+
+    .payment-section {
+        background-color: var(--brasil-gray);
+        border: 2px solid rgba(255, 193, 7, 0.3);
+        border-radius: 15px;
+        padding: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: white;
+    }
+
+    .payment-methods-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .payment-method {
+        background-color: var(--brasil-dark);
+        border: 2px solid rgba(255, 193, 7, 0.3);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        display: block;
+    }
+
+    .payment-method input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .payment-method:hover {
+        border-color: var(--brasil-yellow);
+        transform: translateY(-3px);
+    }
+
+    .payment-method:has(input[type="radio"]:checked) {
+        border-color: var(--brasil-yellow);
+        background-color: rgba(255, 193, 7, 0.1);
+        box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+    }
+
+    .checkmark {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 1.5rem;
+        color: var(--brasil-yellow);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .payment-method input[type="radio"]:checked ~ .payment-method-content .checkmark {
+        opacity: 1;
+    }
+
+    .payment-method-icon {
+        margin-bottom: 0.75rem;
+        transition: transform 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100px;
+    }
+
+    .payment-method-icon img {
+        display: block;
+        margin: 0 auto;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .payment-method:hover .payment-method-icon img {
+        transform: scale(1.08);
+    }
+
+    .payment-method:has(input[type="radio"]:checked) .payment-method-icon img {
+        transform: scale(1.1);
+    }
+
+    .payment-method-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: white;
+    }
+
+    .payment-method-desc {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .summary-card {
+        background-color: var(--brasil-gray);
+        border: 2px solid rgba(255, 193, 7, 0.3);
+        border-radius: 15px;
+        padding: 1.5rem;
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+    }
+
+    .summary-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1.25rem;
+        color: white;
+    }
+
+    .summary-items {
+        margin-bottom: 1.25rem;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .summary-divider {
+        border: none;
+        border-top: 1px solid rgba(255, 193, 7, 0.3);
+        margin: 1rem 0;
+    }
+
+    .summary-subtotal {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+        color: white;
+    }
+
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-top: 1rem;
+        border-top: 2px solid var(--brasil-yellow);
+    }
+
+    .summary-total-label {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    .summary-total-amount {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--brasil-yellow);
+    }
+
+    .delivery-info {
+        background-color: rgba(255, 193, 7, 0.1);
+        border: 1px solid rgba(255, 193, 7, 0.3);
+        border-radius: 8px;
+        padding: 0.85rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: white;
+    }
+
+    .delivery-info i {
+        color: var(--brasil-yellow);
+    }
+
+    .btn-confirm {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, var(--brasil-yellow) 0%, var(--brasil-gold) 100%);
+        color: #000;
+        border: none;
+        border-radius: 50px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-confirm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(255, 193, 7, 0.4);
+    }
+
+    .btn-back {
+        display: block;
+        text-align: center;
+        margin-top: 1rem;
+        color: var(--brasil-yellow);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+    }
+
+    .btn-back:hover {
+        color: white;
+    }
+
+    @@media (max-width: 1024px) {
+        .payment-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-card {
+            position: static;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .page-title {
+            font-size: 1.5rem;
+        }
+
+        .payment-methods-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .main-container {
+            padding: 1.5rem 1rem;
+        }
+    }
+</style>
+
+<main class="main-container">
+    <h1 class="page-title"><i class="bi bi-credit-card"></i> Paiement</h1>
+
+    <div class="payment-layout">
+        <form method="post" asp-action="CreerCommande">
+            <input type="hidden" name="typeLivraison" value="@typeLivraison" />
+            <input type="hidden" name="idZone" value="@idZone" />
+
+            <!-- Payment Methods -->
+            <div class="payment-section">
+                <h2 class="section-title">Choisissez votre méthode de paiement</h2>
+
+                <div class="payment-methods-grid">
+                    <!-- Wave -->
+                    <label class="payment-method">
+                        <input type="radio" name="methodePaiement" value="WAVE" checked />
+                        <div class="payment-method-content">
+                            <div class="payment-method-icon">
+                                <img src="https://play-lh.googleusercontent.com/B2sfLVgRWgV_bk5rtF51w6AieJWXc0qWbyWoaA8pMNp-is41AmvhJYVr95Dq9hT97Es=w240-h480-rw" 
+                                     alt="Wave" style="width: 80px; height: 80px; object-fit: contain" />
+                            </div>
+                            <div class="payment-method-name">Wave</div>
+                            <div class="payment-method-desc">Paiement mobile sécurisé</div>
+                            <div class="checkmark">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Orange Money -->
+                    <label class="payment-method">
+                        <input type="radio" name="methodePaiement" value="ORANGE_MONEY" />
+                        <div class="payment-method-content">
+                            <div class="payment-method-icon">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjykY3ZcP7kv0RJjPwvZhDZB6M7Vggpx8P9w&s" 
+                                     alt="Orange Money" style="width: 95px; height: 95px; object-fit: contain" />
+                            </div>
+                            <div class="payment-method-name">Orange Money</div>
+                            <div class="payment-method-desc">Paiement mobile Orange</div>
+                            <div class="checkmark">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Summary Card -->
+            <div style="display: none;">
+                <button type="submit" id="hiddenSubmitBtn"></button>
+            </div>
+        </form>
+
+        <div class="summary-card">
+            <h2 class="summary-title">Résumé</h2>
+
+            <div class="summary-items">
+                @foreach (var item in panier)
+                {
+                    <div class="summary-item">
+                        <span>@item.Nom (x@(item.Quantite))</span>
+                        <span>@item.Total.ToString("N0") FCFA</span>
+                    </div>
+                }
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-subtotal">
+                <span>Sous-total</span>
+                <span>@sousTotal.ToString("N0") FCFA</span>
+            </div>
+
+            <div class="summary-subtotal">
+                <span>Frais de livraison</span>
+                <span>@fraisLivraison.ToString("N0") FCFA</span>
+            </div>
+
+            <div class="summary-total">
+                <span class="summary-total-label">Total</span>
+                <span class="summary-total-amount">@total.ToString("N0") FCFA</span>
+            </div>
+
+            <div class="delivery-info">
+                <i class="bi bi-@(typeLivraison?.ToString() == "SUR_PLACE" ? "shop" : typeLivraison?.ToString() == "A_RECUPERER" ? "bag" : "truck")"></i>
+                <span><strong>Type de commande:</strong> @typeLivraisonText</span>
+            </div>
+
+            <button type="button" class="btn-confirm" onclick="document.getElementById('hiddenSubmitBtn').click()">
+                <i class="bi bi-check-circle"></i>
+                <span>Confirmer le Paiement</span>
+            </button>
+
+            <a asp-controller="Panier" asp-action="Index" class="btn-back">
+                <i class="bi bi-arrow-left"></i> Retour au panier
+            </a>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        // Mettre à jour le badge du panier
+        if (typeof updateCartBadge === 'function') {
+            updateCartBadge();
+        }
+    </script>
+}

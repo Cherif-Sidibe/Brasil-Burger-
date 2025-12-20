@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using VueClient.Models;
 using VueClient.Services;
 using VueClient.ViewModels;
 
@@ -23,8 +24,8 @@ public class CatalogueController : Controller
         {
             Burgers = burgers,
             Menus = menus,
-            Boissons = complements.Where(c => c.TypeComplement == Models.TypeComplementEnum.BOISSON).ToList(),
-            Frites = complements.Where(c => c.TypeComplement == Models.TypeComplementEnum.FRITES).ToList()
+            Boissons = complements.Where(c => c.TypeComplement == TypeComplementEnum.BOISSON).ToList(),
+            Frites = complements.Where(c => c.TypeComplement == TypeComplementEnum.FRITES).ToList()
         };
 
         return View(viewModel);

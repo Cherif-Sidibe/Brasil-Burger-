@@ -24,7 +24,7 @@ public class Paiement
 
     [Required]
     [Column("methode_paiement")]
-    public MethodePaiementEnum MethodePaiement { get; set; }
+    public MethodePaiementEnum MethodePaiement { get; set; } = MethodePaiementEnum.WAVE;
 
     [Required]
     [Column("statut_paiement")]

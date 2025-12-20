@@ -1,19 +1,11 @@
 is_global = true
 build_property.TargetFramework = net9.0
-build_property.TargetFramework = net9.0
-build_property.TargetPlatformMinVersion = 
 build_property.TargetPlatformMinVersion = 
 build_property.UsingMicrosoftNETSdkWeb = true
-build_property.UsingMicrosoftNETSdkWeb = true
-build_property.ProjectTypeGuids = 
 build_property.ProjectTypeGuids = 
 build_property.InvariantGlobalization = 
-build_property.InvariantGlobalization = 
-build_property.PlatformNeutralAssembly = 
 build_property.PlatformNeutralAssembly = 
 build_property.EnforceExtendedAnalyzerRules = 
-build_property.EnforceExtendedAnalyzerRules = 
-build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = VueClient
 build_property.RootNamespace = VueClient
@@ -38,6 +30,18 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/cherif/OneDrive/Documents/Cour ISM/L3/S1/Projet Brasil Burger/Csharp/VueClient/Views/Catalogue/MenuDetails.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0YWxvZ3VlXE1lbnVEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cherif/OneDrive/Documents/Cour ISM/L3/S1/Projet Brasil Burger/Csharp/VueClient/Views/Commande/ConfirmerCommande.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29tbWFuZGVcQ29uZmlybWVyQ29tbWFuZGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cherif/OneDrive/Documents/Cour ISM/L3/S1/Projet Brasil Burger/Csharp/VueClient/Views/Commande/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29tbWFuZGVcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cherif/OneDrive/Documents/Cour ISM/L3/S1/Projet Brasil Burger/Csharp/VueClient/Views/Commande/MesCommandes.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29tbWFuZGVcTWVzQ29tbWFuZGVzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/cherif/OneDrive/Documents/Cour ISM/L3/S1/Projet Brasil Burger/Csharp/VueClient/Views/Home/Index.cshtml]

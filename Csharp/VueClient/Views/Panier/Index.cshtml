@@ -573,9 +573,13 @@
                     </div>
                 </div>
 
-                <button class="btn-checkout" onclick="procederPaiement()">
-                    Procéder Au Paiement
-                </button>
+                <form method="post" asp-controller="Commande" asp-action="ConfirmerCommande" id="checkoutForm">
+                    <input type="hidden" name="typeLivraison" id="typeLivraisonInput" value="@ViewBag.TypeLivraison" />
+                    <input type="hidden" name="idZone" id="idZoneInput" value="@ViewBag.IdZoneSelectionnee" />
+                    <button type="submit" class="btn-checkout">
+                        Procéder Au Paiement
+                    </button>
+                </form>
             </div>
         </div>
     }

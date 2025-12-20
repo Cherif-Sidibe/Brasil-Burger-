@@ -22,9 +22,17 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        // Déclarer les enums PostgreSQL pour EF Core (requis avec Npgsql 8.0+)
+        // MapEnum dans Program.cs configure Npgsql, HasPostgresEnum configure EF Core
+        modelBuilder.HasPostgresEnum<TypeComplementEnum>("public", "type_complement_enum");
+        modelBuilder.HasPostgresEnum<EtatCommandeEnum>("public", "etat_commande_enum");
+        modelBuilder.HasPostgresEnum<TypeLivraisonEnum>("public", "type_livraison_enum");
+        modelBuilder.HasPostgresEnum<TypeArticleEnum>("public", "type_article_enum");
+        modelBuilder.HasPostgresEnum<MethodePaiementEnum>("public", "methode_paiement_enum");
+        modelBuilder.HasPostgresEnum<StatutPaiementEnum>("public", "statut_paiement_enum");
+
         modelBuilder.Entity<User>(entity =>
         {
-            entity.Property(e => e.Role).HasConversion<string>();
             entity.HasIndex(e => e.Email).IsUnique();
             entity.HasIndex(e => e.Telephone).IsUnique();
 
@@ -44,7 +52,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Complement>(entity =>
         {
-            entity.Property(e => e.TypeComplement).HasConversion<string>();
+            // Le mapping est géré par MapEnum dans Program.cs
         });
 
         modelBuilder.Entity<Zone>(entity =>
@@ -78,8 +86,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Commande>(entity =>
         {
-            entity.Property(e => e.EtatCommande).HasConversion<string>();
-            entity.Property(e => e.TypeLivraison).HasConversion<string>();
+            // Le mapping des enums est géré par MapEnum dans Program.cs
 
             entity.HasOne(e => e.Client)
                 .WithMany(e => e.Commandes)
@@ -109,7 +116,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<DetailCommande>(entity =>
         {
-            entity.Property(e => e.TypeArticle).HasConversion<string>();
+            // Le mapping des enums est géré par MapEnum dans Program.cs
 
             entity.HasOne(e => e.Commande)
                 .WithMany(e => e.DetailCommandes)
@@ -119,8 +126,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Paiement>(entity =>
         {
-            entity.Property(e => e.MethodePaiement).HasConversion<string>();
-            entity.Property(e => e.StatutPaiement).HasConversion<string>();
+            // Le mapping des enums est géré par MapEnum dans Program.cs
 
             entity.HasIndex(e => e.IdCommande).IsUnique();
 

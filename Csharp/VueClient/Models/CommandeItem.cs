@@ -17,7 +17,7 @@ public class DetailCommande
 
     [Required]
     [Column("type_article")]
-    public TypeArticleEnum TypeArticle { get; set; }
+    public TypeArticleEnum TypeArticle { get; set; } = TypeArticleEnum.BURGER;
 
     [Required]
     [Column("id_article")]

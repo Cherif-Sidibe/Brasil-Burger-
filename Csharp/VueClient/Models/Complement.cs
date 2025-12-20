@@ -17,7 +17,7 @@ public class Complement
 
     [Required]
     [Column("type_complement")]
-    public TypeComplementEnum TypeComplement { get; set; }
+    public TypeComplementEnum TypeComplement { get; set; } = TypeComplementEnum.FRITES;
 
     [Column("description", TypeName = "text")]
     public string? Description { get; set; }

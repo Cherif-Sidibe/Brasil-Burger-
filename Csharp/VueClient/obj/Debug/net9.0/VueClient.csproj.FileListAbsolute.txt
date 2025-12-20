@@ -282,3 +282,4 @@ C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\Vu
 C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\VueClient\obj\Debug\net9.0\VueClient.pdb
 C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\VueClient\obj\Debug\net9.0\VueClient.genruntimeconfig.cache
 C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\VueClient\obj\Debug\net9.0\ref\VueClient.dll
+C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\VueClient\obj\Debug\net9.0\compressed\b2o1d4hkqu-y2ulvg7d9f.gz

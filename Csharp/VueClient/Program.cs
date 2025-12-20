@@ -1,7 +1,13 @@
 using Microsoft.EntityFrameworkCore;
+using VueClient.Data;
+using VueClient.Services;
+using VueClient.Services.Impl;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql("Host=ep-quiet-silence-ae71zpqr-pooler.c-2.us-east-2.aws.neon.tech;Database=Brasil_Burger;Username=neondb_owner;Password=npg_PUa4oqjNxwT9;SSL Mode=Require"));
+builder.Services.AddScoped<ICatalogueService, CatalogueService>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

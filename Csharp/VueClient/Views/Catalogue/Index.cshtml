@@ -1,0 +1,159 @@
+@model VueClient.ViewModels.CatalogueViewModel
+@{
+    ViewData["Title"] = "Notre Menu";
+}
+
+<link rel="stylesheet" href="~/css/catalogue.css" />
+
+<div class="main-content">
+    <!-- En-tête de la page -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="bi bi-list-ul"></i> Notre Menu
+        </h1>
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="Rechercher..." id="searchInput">
+        </div>
+    </div>
+
+    <!-- Section de filtres -->
+    <div class="filter-section">
+        <div class="filter-container">
+            <span class="filter-label">Filtrer par:</span>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">Tous</button>
+                <button class="filter-btn" data-filter="menu">Menus</button>
+                <button class="filter-btn" data-filter="burger">Burgers</button>
+                <button class="filter-btn" data-filter="complement">Compléments</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grille des produits -->
+    <div class="products-grid">
+        <!-- Menus -->
+        @foreach (var menu in Model.Menus)
+        {
+            <div class="product-card" data-category="menu">
+                @if (!string.IsNullOrEmpty(menu.Image))
+                {
+                    <img src="@menu.Image" alt="@menu.Nom" class="product-image">
+                }
+                else
+                {
+                    <img src="https://via.placeholder.com/280x200/1a1a1a/ffc107?text=@menu.Nom" alt="@menu.Nom" class="product-image">
+                }
+                <div class="product-info">
+                    <h3 class="product-name">@menu.Nom</h3>
+                    <p class="product-description">
+                        @menu.Description
+                        <br><br>
+                        <small style="color: rgba(255, 193, 7, 0.8);">
+                            <i class="bi bi-check-circle"></i> @menu.Burger.Nom<br>
+                            <i class="bi bi-check-circle"></i> @menu.ComplementBoisson.Nom<br>
+                            <i class="bi bi-check-circle"></i> @menu.ComplementFrite.Nom
+                        </small>
+                    </p>
+                    <div class="product-footer">
+                        <span class="product-price">@menu.Prix.ToString("N0") FCFA</span>
+                        <form method="post" asp-controller="Panier" asp-action="Ajouter" style="display: inline;">
+                            <input type="hidden" name="id" value="@menu.Id" />
+                            <input type="hidden" name="type" value="menu" />
+                            <button type="submit" class="add-btn">
+                                <i class="bi bi-cart-plus"></i> Ajouter
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Burgers -->
+        @foreach (var burger in Model.Burgers)
+        {
+            <div class="product-card" data-category="burger">
+                @if (!string.IsNullOrEmpty(burger.Image))
+                {
+                    <img src="@burger.Image" alt="@burger.Nom" class="product-image">
+                }
+                else
+                {
+                    <img src="https://via.placeholder.com/280x200/1a1a1a/ffc107?text=@burger.Nom" alt="@burger.Nom" class="product-image">
+                }
+                <div class="product-info">
+                    <h3 class="product-name">@burger.Nom</h3>
+                    <p class="product-description">@burger.Description</p>
+                    <div class="product-footer">
+                        <span class="product-price">@burger.Prix.ToString("N0") FCFA</span>
+                        <form method="post" asp-controller="Panier" asp-action="Ajouter" style="display: inline;">
+                            <input type="hidden" name="id" value="@burger.Id" />
+                            <input type="hidden" name="type" value="burger" />
+                            <button type="submit" class="add-btn">
+                                <i class="bi bi-cart-plus"></i> Ajouter
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Boissons -->
+        @foreach (var boisson in Model.Boissons)
+        {
+            <div class="product-card" data-category="complement">
+                @if (!string.IsNullOrEmpty(boisson.Image))
+                {
+                    <img src="@boisson.Image" alt="@boisson.Nom" class="product-image">
+                }
+                else
+                {
+                    <img src="https://via.placeholder.com/280x200/1a1a1a/ffc107?text=@boisson.Nom" alt="@boisson.Nom" class="product-image">
+                }
+                <div class="product-info">
+                    <h3 class="product-name">@boisson.Nom</h3>
+                    <p class="product-description">@boisson.Description</p>
+                    <div class="product-footer">
+                        <span class="product-price">@boisson.Prix.ToString("N0") FCFA</span>
+                        <form method="post" asp-controller="Panier" asp-action="Ajouter" style="display: inline;">
+                            <input type="hidden" name="id" value="@boisson.Id" />
+                            <input type="hidden" name="type" value="complement" />
+                            <button type="submit" class="add-btn">
+                                <i class="bi bi-cart-plus"></i> Ajouter
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Frites -->
+        @foreach (var frite in Model.Frites)
+        {
+            <div class="product-card" data-category="complement">
+                @if (!string.IsNullOrEmpty(frite.Image))
+                {
+                    <img src="@frite.Image" alt="@frite.Nom" class="product-image">
+                }
+                else
+                {
+                    <img src="https://via.placeholder.com/280x200/1a1a1a/ffc107?text=@frite.Nom" alt="@frite.Nom" class="product-image">
+                }
+                <div class="product-info">
+                    <h3 class="product-name">@frite.Nom</h3>
+                    <p class="product-description">@frite.Description</p>
+                    <div class="product-footer">
+                        <span class="product-price">@frite.Prix.ToString("N0") FCFA</span>
+                        <form method="post" asp-controller="Panier" asp-action="Ajouter" style="display: inline;">
+                            <input type="hidden" name="id" value="@frite.Id" />
+                            <input type="hidden" name="type" value="complement" />
+                            <button type="submit" class="add-btn">
+                                <i class="bi bi-cart-plus"></i> Ajouter
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -9,18 +9,6 @@ public class AppDbContext : DbContext
     {
     }
 
-    public AppDbContext()
-    {
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseNpgsql("Host=ep-quiet-silence-ae71zpqr-pooler.c-2.us-east-2.aws.neon.tech;Database=Brasil_Burger;Username=neondb_owner;Password=npg_PUa4oqjNxwT9;SSL Mode=Require");
-        }
-    }
-
     public DbSet<User> Users { get; set; }
     public DbSet<Burger> Burgers { get; set; }
     public DbSet<Complement> Complements { get; set; }
@@ -36,6 +24,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
+            entity.Property(e => e.Role).HasConversion<string>();
             entity.HasIndex(e => e.Email).IsUnique();
             entity.HasIndex(e => e.Telephone).IsUnique();
 
@@ -51,6 +40,11 @@ public class AppDbContext : DbContext
                 .WithOne(e => e.Burger)
                 .HasForeignKey(e => e.IdBurger)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Complement>(entity =>
+        {
+            entity.Property(e => e.TypeComplement).HasConversion<string>();
         });
 
         modelBuilder.Entity<Zone>(entity =>
@@ -84,6 +78,9 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Commande>(entity =>
         {
+            entity.Property(e => e.EtatCommande).HasConversion<string>();
+            entity.Property(e => e.TypeLivraison).HasConversion<string>();
+
             entity.HasOne(e => e.Client)
                 .WithMany(e => e.Commandes)
                 .HasForeignKey(e => e.IdClient)
@@ -112,6 +109,8 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<DetailCommande>(entity =>
         {
+            entity.Property(e => e.TypeArticle).HasConversion<string>();
+
             entity.HasOne(e => e.Commande)
                 .WithMany(e => e.DetailCommandes)
                 .HasForeignKey(e => e.IdCommande)
@@ -120,6 +119,9 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Paiement>(entity =>
         {
+            entity.Property(e => e.MethodePaiement).HasConversion<string>();
+            entity.Property(e => e.StatutPaiement).HasConversion<string>();
+
             entity.HasIndex(e => e.IdCommande).IsUnique();
 
             entity.HasOne(e => e.Commande)

@@ -269,6 +269,48 @@
         accent-color: var(--brasil-yellow);
     }
 
+    .zone-section {
+        display: none;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid rgba(255, 193, 7, 0.2);
+    }
+
+    /* Afficher la zone uniquement si le radio "Livraison" est coché */
+    .order-type-section:has(input[name="typeLivraison"][value="delivery"]:checked) .zone-section {
+        display: block;
+    }
+
+    .zone-select {
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(255, 193, 7, 0.3);
+        border-radius: 10px;
+        padding: 1rem;
+        color: white;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .zone-select:hover {
+        border-color: var(--brasil-yellow);
+        background-color: rgba(255, 193, 7, 0.1);
+    }
+
+    .zone-select:focus {
+        border-color: var(--brasil-yellow);
+        box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
+    }
+
+    .zone-select option {
+        background-color: var(--brasil-dark);
+        color: white;
+        padding: 0.5rem;
+    }
+
     .summary-details {
         border-top: 2px solid rgba(255, 255, 255, 0.1);
         padding-top: 1.5rem;
@@ -479,22 +521,40 @@
 
                 <div class="order-type-section">
                     <p class="section-label">Type de commande</p>
-                    <div class="order-options">
-                        <label class="option-btn active">
-                            <input type="radio" name="orderType" value="dine-in" checked />
-                            <i class="bi bi-shop"></i>
-                            <span>Sur place</span>
-                        </label>
-                        <label class="option-btn">
-                            <input type="radio" name="orderType" value="takeaway" />
-                            <i class="bi bi-bag"></i>
-                            <span>À emporter</span>
-                        </label>
-                        <label class="option-btn">
-                            <input type="radio" name="orderType" value="delivery" />
-                            <i class="bi bi-truck"></i>
-                            <span>Livraison</span>
-                        </label>
+                    <form method="get" id="typeForm">
+                        <div class="order-options">
+                            <label class="option-btn @(ViewBag.TypeLivraison == "dine-in" ? "active" : "")">
+                                <input type="radio" name="typeLivraison" value="dine-in" @(ViewBag.TypeLivraison == "dine-in" ? "checked" : "") onchange="this.form.submit()" />
+                                <i class="bi bi-shop"></i>
+                                <span>Sur place</span>
+                            </label>
+                            <label class="option-btn @(ViewBag.TypeLivraison == "takeaway" ? "active" : "")">
+                                <input type="radio" name="typeLivraison" value="takeaway" @(ViewBag.TypeLivraison == "takeaway" ? "checked" : "") onchange="this.form.submit()" />
+                                <i class="bi bi-bag"></i>
+                                <span>À emporter</span>
+                            </label>
+                            <label class="option-btn @(ViewBag.TypeLivraison == "delivery" ? "active" : "")">
+                                <input type="radio" name="typeLivraison" value="delivery" @(ViewBag.TypeLivraison == "delivery" ? "checked" : "") onchange="this.form.submit()" />
+                                <i class="bi bi-truck"></i>
+                                <span>Livraison</span>
+                            </label>
+                        </div>
+                    </form>
+
+                    <div class="zone-section" id="zoneSection">
+                        <p class="section-label">Zone de livraison</p>
+                        <form method="get" id="zoneForm">
+                            <input type="hidden" name="typeLivraison" value="delivery" />
+                            <select class="zone-select" id="zoneSelect" name="idZone" onchange="this.form.submit()">
+                                <option value="">Sélectionnez une zone</option>
+                                @foreach (var zone in ViewBag.Zones)
+                                {
+                                    <option value="@zone.Id" data-frais="@zone.PrixLivraison" selected="@(ViewBag.IdZoneSelectionnee == zone.Id ? "selected" : null)">
+                                        @zone.Nom - @zone.PrixLivraison.ToString("N0") FCFA
+                                    </option>
+                                }
+                            </select>
+                        </form>
                     </div>
                 </div>
 
@@ -662,14 +722,6 @@
         }
 
         let currentItemToDelete = null;
-
-        // Order type selection
-        document.querySelectorAll('.option-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
 
         // Procéder au paiement
         function procederPaiement() {

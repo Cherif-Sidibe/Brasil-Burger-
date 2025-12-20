@@ -3,139 +3,295 @@
     ViewData["Title"] = "Mes Commandes";
 }
 
-<div class="container py-5">
-    <div class="row">
-        <div class="col-12">
-            <!-- En-tête -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h2">
-                    <i class="bi bi-receipt-cutoff me-2"></i>Mes Commandes
-                </h1>
-                <a href="@Url.Action("Index", "Catalogue")" class="btn btn-primary">
-                    <i class="bi bi-plus me-2"></i>Nouvelle commande
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+
+<style>
+    :root {
+        --brasil-dark: #000000;
+        --brasil-gray: #1a1a1a;
+        --brasil-yellow: #ffc107;
+        --brasil-green: #4caf50;
+    }
+
+    body {
+        background-color: var(--brasil-dark);
+        color: #fff;
+    }
+
+    .brasil-container {
+        background-color: var(--brasil-dark);
+        min-height: 100vh;
+        padding: 40px 20px;
+    }
+
+    .brasil-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .brasil-title {
+        color: var(--brasil-yellow);
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+
+    .brasil-btn-new {
+        background-color: var(--brasil-yellow);
+        color: #000;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+    }
+
+    .brasil-btn-new:hover {
+        background-color: #e6b800;
+        transform: scale(1.05);
+    }
+
+    .brasil-card {
+        background-color: var(--brasil-gray);
+        border: 2px solid var(--brasil-yellow);
+        border-radius: 15px;
+        padding: 30px;
+        color: #fff;
+        margin-bottom: 20px;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .brasil-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
+    .brasil-order-number {
+        color: var(--brasil-yellow);
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+
+    .brasil-status-badge {
+        border: 1px solid var(--brasil-green);
+        color: var(--brasil-green);
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: bold;
+    }
+
+    .brasil-card-body {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        margin-bottom: 20px;
+    }
+
+    .brasil-info-item {
+        text-align: center;
+    }
+
+    .brasil-info-label {
+        color: #aaa;
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+
+    .brasil-info-value {
+        color: #fff;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .brasil-total-amount {
+        color: var(--brasil-yellow);
+        font-size: 1.4rem;
+        font-weight: bold;
+    }
+
+    .brasil-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
+    .payment-status {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .brasil-btn-details {
+        background-color: transparent;
+        color: var(--brasil-yellow);
+        border: 2px solid var(--brasil-yellow);
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+    }
+
+    .brasil-btn-details:hover {
+        background-color: var(--brasil-yellow);
+        color: #000;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .empty-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+        color: var(--brasil-yellow);
+    }
+
+    .empty-title {
+        color: var(--brasil-yellow);
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    .empty-text {
+        color: #aaa;
+        margin-bottom: 30px;
+    }
+</style>
+
+<div class="brasil-container">
+    <div class="brasil-header">
+        <h1 class="brasil-title">Mes Commandes</h1>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="brasil-card">
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="bi bi-shop"></i>
+                </div>
+                <div class="empty-title">Aucune commande</div>
+                <div class="empty-text">Vous n'avez pas encore passé de commande.</div>
+                <a href="@Url.Action("Index", "Catalogue")" class="brasil-btn-new">
+                    Découvrir notre catalogue
                 </a>
             </div>
-
-            @if (Model == null || !Model.Any())
-            {
-                <!-- Message si aucune commande -->
-                <div class="card shadow-sm">
-                    <div class="card-body text-center py-5">
-                        <i class="bi bi-bag-x text-muted" style="font-size: 4rem;"></i>
-                        <h4 class="mt-3">Aucune commande</h4>
-                        <p class="text-muted">Vous n'avez pas encore passé de commande.</p>
-                        <a href="@Url.Action("Index", "Catalogue")" class="btn btn-primary mt-2">
-                            <i class="bi bi-shop me-2"></i>Découvrir notre catalogue
-                        </a>
-                    </div>
+        </div>
+    }
+    else
+    {
+        @foreach (var commande in Model)
+        {
+            <div class="brasil-card">
+                <div class="brasil-card-header">
+                    <span class="brasil-order-number">#BR2025-@commande.Id.ToString("00000")</span>
+                    <span class="brasil-status-badge">
+                        @switch (commande.EtatCommande)
+                        {
+                            case VueClient.Models.EtatCommandeEnum.EN_ATTENTE:
+                                @:En attente
+                                break;
+                            case VueClient.Models.EtatCommandeEnum.CONFIRMEE:
+                                @:Confirmée
+                                break;
+                            case VueClient.Models.EtatCommandeEnum.EN_PREPARATION:
+                                @:En préparation
+                                break;
+                            case VueClient.Models.EtatCommandeEnum.PRETE:
+                                @:Prête
+                                break;
+                            case VueClient.Models.EtatCommandeEnum.LIVREE:
+                                @:Livrée
+                                break;
+                            case VueClient.Models.EtatCommandeEnum.RETIREE:
+                                @:Retirée
+                                break;
+                            case VueClient.Models.EtatCommandeEnum.CONSOMMEE_SUR_PLACE:
+                                @:Consommée sur place
+                                break;
+                            case VueClient.Models.EtatCommandeEnum.ANNULEE:
+                                @:Annulée
+                                break;
+                        }
+                    </span>
                 </div>
-            }
-            else
-            {
-                <!-- Liste des commandes -->
-                <div class="row g-4">
-                    @foreach (var commande in Model)
+
+                <div class="brasil-card-body">
+                    <div class="brasil-info-item">
+                        <div class="brasil-info-label">Type de livraison</div>
+                        <div class="brasil-info-value">
+                            @if (commande.TypeLivraison == VueClient.Models.TypeLivraisonEnum.SUR_PLACE)
+                            {
+                                @:Sur place
+                            }
+                            else if (commande.TypeLivraison == VueClient.Models.TypeLivraisonEnum.A_RECUPERER)
+                            {
+                                @:À récupérer
+                            }
+                            else
+                            {
+                                @:Livraison
+                            }
+                        </div>
+                    </div>
+
+                    @if (commande.Zone != null)
                     {
-                        <div class="col-12">
-                            <div class="card shadow-sm">
-                                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h5 class="mb-0">
-                                            <i class="bi bi-receipt me-2"></i>Commande #@commande.Id
-                                        </h5>
-                                        <small class="text-muted">
-                                            @commande.DateCommande.ToString("dd/MM/yyyy à HH:mm")
-                                        </small>
-                                    </div>
-                                    <div>
-                                        @{
-                                            var badgeClass = commande.EtatCommande switch
-                                            {
-                                                VueClient.Models.EtatCommandeEnum.EN_ATTENTE => "bg-warning text-dark",
-                                                VueClient.Models.EtatCommandeEnum.EN_PREPARATION => "bg-info",
-                                                VueClient.Models.EtatCommandeEnum.PRETE => "bg-primary",
-                                                VueClient.Models.EtatCommandeEnum.CONFIRMEE => "bg-info",
-                                                VueClient.Models.EtatCommandeEnum.LIVREE => "bg-success",
-                                                VueClient.Models.EtatCommandeEnum.RETIREE => "bg-success",
-                                                VueClient.Models.EtatCommandeEnum.CONSOMMEE_SUR_PLACE => "bg-success",
-                                                VueClient.Models.EtatCommandeEnum.ANNULEE => "bg-danger",
-                                                _ => "bg-secondary"
-                                            };
-                                            var etatText = commande.EtatCommande.ToString().Replace("_", " ");
-                                        }
-                                        <span class="badge @badgeClass">@etatText</span>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-4">
-                                            <p class="mb-1"><strong>Type :</strong></p>
-                                            <p class="text-muted mb-0">
-                                                @if (commande.TypeLivraison == VueClient.Models.TypeLivraisonEnum.SUR_PLACE)
-                                                {
-                                                    <i class="bi bi-shop me-1"></i>
-
-                                                    @:Sur place
-                                                }
-                                                else if (commande.TypeLivraison ==
-                                                VueClient.Models.TypeLivraisonEnum.A_RECUPERER)
-                                                {
-                                                    <i class="bi bi-bag me-1"></i>
-
-                                                    @:À récupérer
-                                                }
-                                                else
-                                                {
-                                                    <i class="bi bi-truck me-1"></i>
-
-                                                    @:Livraison
-                                                }
-                                            </p>
-                                        </div>
-                                        <div class="col-md-4">
-                                            @if (commande.Zone != null)
-                                            {
-                                                <p class="mb-1"><strong>Zone :</strong></p>
-                                                <p class="text-muted mb-0">
-                                                    <i class="bi bi-geo-alt me-1"></i>@commande.Zone.Nom
-                                                </p>
-                                            }
-                                        </div>
-                                        <div class="col-md-4 text-md-end">
-                                            <p class="mb-1"><strong>Montant total :</strong></p>
-                                            <p class="h5 text-primary mb-0">
-                                                @commande.MontantTotal.ToString("N0") FCFA
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-footer bg-white d-flex justify-content-between align-items-center">
-                                    <div>
-                                        @if (commande.Paiement != null)
-                                        {
-                                            var paiementBadge = commande.Paiement.StatutPaiement switch
-                                            {
-                                                VueClient.Models.StatutPaiementEnum.EN_ATTENTE => "bg-warning text-dark",
-                                                VueClient.Models.StatutPaiementEnum.REUSSI => "bg-success",
-                                                VueClient.Models.StatutPaiementEnum.ECHEC => "bg-danger",
-                                                _ => "bg-secondary"
-                                            };
-                                            <span class="badge @paiementBadge">
-                                                <i class="bi bi-credit-card me-1"></i>
-                                                @commande.Paiement.StatutPaiement.ToString().Replace("_", " ")
-                                            </span>
-                                        }
-                                    </div>
-                                    <a href="@Url.Action("Details", "Commande", new { id = commande.Id })"
-                                        class="btn btn-outline-primary btn-sm">
-                                        <i class="bi bi-eye me-1"></i>Voir les détails
-                                    </a>
-                                </div>
-                            </div>
+                        <div class="brasil-info-item">
+                            <div class="brasil-info-label">Zone</div>
+                            <div class="brasil-info-value">@commande.Zone.Nom</div>
                         </div>
                     }
+
+                    <div class="brasil-info-item">
+                        <div class="brasil-info-label">Date</div>
+                        <div class="brasil-info-value">@commande.DateCommande.ToString("dd/MM/yyyy")</div>
+                    </div>
                 </div>
-            }
-        </div>
-    </div>
+
+                <div class="brasil-card-footer">
+                    @if (commande.Paiement != null)
+                    {
+                        <div class="payment-status">
+                            <span style="color: #aaa;">Paiement:</span>
+                            <span
+                                style="@(commande.Paiement.StatutPaiement == VueClient.Models.StatutPaiementEnum.REUSSI ? "color: var(--brasil-green);" : commande.Paiement.StatutPaiement == VueClient.Models.StatutPaiementEnum.ECHEC ? "color: #ff6b6b;" : "color: #ffa500;")">
+                                @commande.Paiement.StatutPaiement.ToString().Replace("_", " ")
+                            </span>
+                        </div>
+                    }
+
+                    <div class="brasil-total-amount">
+                        @commande.MontantTotal.ToString("N0") FCFA
+                    </div>
+
+                    <a href="@Url.Action("Details", "Commande", new { id = commande.Id })" class="brasil-btn-details">
+                        <i class="bi bi-eye me-2"></i>Voir les détails
+                    </a>
+                </div>
+            </div>
+        }
+    }
 </div>

@@ -1,146 +1,362 @@
 @model VueClient.Models.Commande
 @{
-    ViewData["Title"] = "Détails de la commande #" + Model.Id;
+    ViewData["Title"] = "Suivi de commande #" + Model.Id;
 }
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <!-- En-tête de confirmation -->
-            <div class="text-center mb-4">
-                <div class="mb-3">
-                    <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
-                </div>
-                <h1 class="h2 text-success">Commande confirmée !</h1>
-                <p class="text-muted">Merci pour votre commande. Voici le récapitulatif.</p>
-            </div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
 
-            <!-- Carte de la commande -->
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="bi bi-receipt me-2"></i>Commande #@Model.Id
-                    </h5>
-                    <span class="badge bg-light text-primary">
-                        @Model.EtatCommande.ToString().Replace("_", " ")
-                    </span>
-                </div>
-                <div class="card-body">
-                    <!-- Informations générales -->
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <p class="mb-1"><strong>Date :</strong></p>
-                            <p class="text-muted">@Model.DateCommande.ToString("dd/MM/yyyy à HH:mm")</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p class="mb-1"><strong>Type de livraison :</strong></p>
-                            <p class="text-muted">
-                                @if (Model.TypeLivraison == VueClient.Models.TypeLivraisonEnum.SUR_PLACE)
-                                {
-                                    <i class="bi bi-shop me-1"></i>
-                                
-                                    @:Sur place
-                                }
-                                else if (Model.TypeLivraison == VueClient.Models.TypeLivraisonEnum.A_RECUPERER)
-                                {
-                                    <i class="bi bi-bag me-1"></i>
-                                
-                                    @:À récupérer
-                                }
-                                else
-                                {
-                                    <i class="bi bi-truck me-1"></i>
-                                
-                                    @:Livraison
-                                }
-                            </p>
+<style>
+    :root {
+        --brasil-dark: #000000;
+        --brasil-gray: #1a1a1a;
+        --brasil-yellow: #ffc107;
+        --brasil-green: #4caf50;
+    }
+
+    body {
+        background-color: var(--brasil-dark);
+        color: #fff;
+    }
+
+    .brasil-container {
+        background-color: var(--brasil-dark);
+        min-height: 100vh;
+        padding: 40px 20px;
+        color: #fff;
+    }
+
+    .brasil-card {
+        background-color: var(--brasil-gray);
+        border: 2px solid var(--brasil-yellow);
+        border-radius: 15px;
+        padding: 30px;
+        color: #fff;
+    }
+
+    .brasil-title {
+        color: var(--brasil-yellow);
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .brasil-order-number {
+        color: var(--brasil-yellow);
+        font-size: 28px;
+        font-weight: bold;
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .brasil-status-badge {
+        border: 1px solid var(--brasil-green);
+        color: var(--brasil-green);
+        padding: 5px 15px;
+        border-radius: 20px;
+        display: inline-block;
+        text-align: center;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .progress-circle {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: conic-gradient(var(--brasil-yellow) 0deg 270deg, rgba(255, 193, 7, 0.2) 270deg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 30px auto;
+        position: relative;
+        box-shadow: inset 0 0 20px rgba(255, 193, 7, 0.2);
+        transition: background 0.5s ease;
+    }
+
+    .progress-circle-inner {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background-color: var(--brasil-dark);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        font-size: 60px;
+        color: var(--brasil-yellow);
+    }
+
+    .progress-status {
+        font-size: 14px;
+        color: #fff;
+        margin-top: 10px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .brasil-summary-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 193, 7, 0.3);
+        color: #fff;
+    }
+
+    .brasil-summary-item:last-child {
+        border-bottom: none;
+    }
+
+    .brasil-total {
+        background-color: rgba(255, 193, 7, 0.1);
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 20px;
+        font-weight: bold;
+        font-size: 18px;
+        color: var(--brasil-yellow);
+    }
+
+    .brasil-delivery-info {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: rgba(255, 193, 7, 0.1);
+        border-radius: 10px;
+        text-align: center;
+        font-weight: bold;
+        color: var(--brasil-yellow);
+    }
+
+    .brasil-btn-outline {
+        background: transparent;
+        border: 2px solid var(--brasil-yellow);
+        color: var(--brasil-yellow);
+        padding: 15px 40px;
+        border-radius: 30px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .brasil-btn-outline:hover {
+        background-color: var(--brasil-yellow);
+        color: var(--brasil-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+    }
+</style>
+
+<div class="brasil-container">
+    <div class="container">
+        <div class="row">
+            <!-- Colonne gauche : Suivi de commande -->
+            <div class="col-lg-6">
+                <div class="brasil-card">
+                    <h2 class="brasil-title" style="text-align: center;">Suivi de commande</h2>
+
+                    <div class="brasil-order-number">#BR2025-@Model.Id.ToString("00000")</div>
+
+                    <div style="text-align: center;">
+                        <span class="brasil-status-badge">
+                            @if (Model.TypeLivraison == VueClient.Models.TypeLivraisonEnum.SUR_PLACE)
+                            {
+                                @:Sur place
+                            }
+                            else if (Model.TypeLivraison == VueClient.Models.TypeLivraisonEnum.A_RECUPERER)
+                            {
+                                @:À récupérer
+                            }
+                            else
+                            {
+                                @:Livraison
+                            }
+                        </span>
+                    </div>
+
+                    <div class="progress-circle" id="progressCircle">
+                        <div class="progress-circle-inner">
+                            <i class="bi bi-flame"></i>
                         </div>
                     </div>
 
-                    @if (Model.TypeLivraison == VueClient.Models.TypeLivraisonEnum.A_LIVRER &&
-                                        !string.IsNullOrEmpty(Model.AdresseLivraison))
-                    {
-                        <div class="mb-4">
-                            <p class="mb-1"><strong>Adresse de livraison :</strong></p>
-                            <p class="text-muted">
-                                <i class="bi bi-geo-alt me-1"></i>@Model.AdresseLivraison
-                            </p>
-                        </div>
-                    }
+                    <div class="progress-status" id="statusText">
+                        @switch (Model.EtatCommande)
+                        {
+                            case VueClient.Models.EtatCommandeEnum.EN_ATTENTE:
+                                @:En attente
+                                break;
+                            case VueClient.Models.EtatCommandeEnum.CONFIRMEE:
+                                @:Confirmée
+                                break;
+                            case VueClient.Models.EtatCommandeEnum.EN_PREPARATION:
+                                @:En préparation
+                                break;
+                            case VueClient.Models.EtatCommandeEnum.PRETE:
+                                @:Prête
+                                break;
+                            case VueClient.Models.EtatCommandeEnum.LIVREE:
+                                @:Livrée
+                                break;
+                            case VueClient.Models.EtatCommandeEnum.RETIREE:
+                                @:Retirée
+                                break;
+                            case VueClient.Models.EtatCommandeEnum.CONSOMMEE_SUR_PLACE:
+                                @:Consommée sur place
+                                break;
+                            case VueClient.Models.EtatCommandeEnum.ANNULEE:
+                                @:Annulée
+                                break;
+                        }
+                    </div>
 
-                    <!-- Détails des articles -->
-                    <h6 class="border-bottom pb-2 mb-3">
-                        <i class="bi bi-list-ul me-2"></i>Articles commandés
-                    </h6>
+                    
+                </div>
+            </div>
+
+            <!-- Colonne droite : Résumé de la commande -->
+            <div class="col-lg-6">
+                <div class="brasil-card">
+                    <h2 class="brasil-title">Résumé de la commande</h2>
 
                     @if (Model.DetailCommandes != null && Model.DetailCommandes.Any())
                     {
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Article</th>
-                                        <th class="text-center">Quantité</th>
-                                        <th class="text-end">Prix unitaire</th>
-                                        <th class="text-end">Sous-total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var detail in Model.DetailCommandes)
-                                    {
-                                        <tr>
-                                            <td>
-                                                <span class="badge bg-secondary me-2">@detail.TypeArticle</span>
-                                                Article #@detail.IdArticle
-                                            </td>
-                                            <td class="text-center">@detail.Quantite</td>
-                                            <td class="text-end">@detail.PrixUnitaire.ToString("N0") FCFA</td>
-                                            <td class="text-end fw-bold">@detail.SousTotal.ToString("N0") FCFA</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted text-center">Aucun détail disponible</p>
+                        @foreach (var detail in Model.DetailCommandes)
+                        {
+                            <div class="brasil-summary-item">
+                                <span>Article #@detail.IdArticle (@detail.Quantite)x</span>
+                                <span>@detail.SousTotal.ToString("N0") FCFA</span>
+                            </div>
+                        }
                     }
 
-                    <!-- Total -->
-                    <div class="d-flex justify-content-end mt-3">
-                        <div class="bg-light p-3 rounded">
-                            <h5 class="mb-0">
-                                Total : <span class="text-primary">@Model.MontantTotal.ToString("N0") FCFA</span>
-                            </h5>
+                    <div class="brasil-summary-item">
+                        <span>Sous-total</span>
+                        <span>@Model.DetailCommandes?.Sum(d => d.SousTotal).ToString("N0") FCFA</span>
+                    </div>
+
+                    <div class="brasil-summary-item">
+                        <span>Frais de livraison</span>
+                        <span>@(Model.MontantTotal - (Model.DetailCommandes?.Sum(d => d.SousTotal) ?? 0)).ToString("N0")
+                            FCFA</span>
+                    </div>
+
+                    <div class="brasil-total">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Total</span>
+                            <span>@Model.MontantTotal.ToString("N0") FCFA</span>
                         </div>
                     </div>
-                </div>
 
-                <!-- Pied de carte avec actions -->
-                <div class="card-footer bg-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <a href="@Url.Action("MesCommandes", "Commande")" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left me-2"></i>Mes commandes
-                        </a>
-                        <a href="@Url.Action("Index", "Catalogue")" class="btn btn-primary">
-                            <i class="bi bi-shop me-2"></i>Continuer mes achats
-                        </a>
+                    <div class="brasil-delivery-info">
+                        @if (Model.TypeLivraison == VueClient.Models.TypeLivraisonEnum.SUR_PLACE)
+                        {
+                            @:Sur place
+                        }
+                        else if (Model.TypeLivraison == VueClient.Models.TypeLivraisonEnum.A_RECUPERER)
+                        {
+                            @:À récupérer
+                        }
+                        else if (!string.IsNullOrEmpty(Model.AdresseLivraison))
+                        {
+                            @:@Model.AdresseLivraison
+                        }
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Informations supplémentaires -->
-            <div class="mt-4 text-center text-muted">
-                <p>
-                    <i class="bi bi-info-circle me-1"></i>
-                    Un email de confirmation vous sera envoyé prochainement.
-                </p>
-                <p>
-                    <i class="bi bi-telephone me-1"></i>
-                    Pour toute question, contactez-nous au <strong>+221 XX XXX XX XX</strong>
-                </p>
-            </div>
+        <!-- Bouton de contact -->
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="#contact" class="brasil-btn-outline">
+                <i class="bi bi-headset me-2"></i>Contacter Le Support Client
+            </a>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Suivi en temps réel de la commande
+        let previousStatus = '@Model.EtatCommande';
+        const commandeId = @Model.Id;
+
+        // Fonction pour obtenir le pourcentage de progression
+        function getProgressPercentage(etat) {
+            const statusMap = {
+                'EN_ATTENTE': 15,
+                'CONFIRMEE': 30,
+                'EN_PREPARATION': 60,
+                'PRETE': 85,
+                'LIVREE': 100,
+                'RETIREE': 100,
+                'CONSOMMEE_SUR_PLACE': 100,
+                'ANNULEE': 0
+            };
+            return statusMap[etat] || 15;
+        }
+
+        // Fonction pour obtenir le texte du statut
+        function getStatusText(etat) {
+            const textMap = {
+                'EN_ATTENTE': 'En attente',
+                'CONFIRMEE': 'Confirmée',
+                'EN_PREPARATION': 'En préparation',
+                'PRETE': 'Prête',
+                'LIVREE': 'Livrée',
+                'RETIREE': 'Retirée',
+                'CONSOMMEE_SUR_PLACE': 'Consommée sur place',
+                'ANNULEE': 'Annulée'
+            };
+            return textMap[etat] || etat;
+        }
+
+        // Fonction pour mettre à jour l'interface
+        function updateUI(etat) {
+            const percentage = getProgressPercentage(etat);
+            const statusText = getStatusText(etat);
+            const progressCircle = document.getElementById('progressCircle');
+            const statusTextElement = document.getElementById('statusText');
+
+            // Mettre à jour le cercle de progression
+            const degrees = (percentage / 100) * 360;
+            progressCircle.style.background = `conic-gradient(
+                    var(--brasil-yellow) 0deg ${degrees}deg,
+                    rgba(255, 193, 7, 0.2) ${degrees}deg
+                )`;
+
+            // Mettre à jour le texte du statut avec animation
+            statusTextElement.style.opacity = '0';
+            setTimeout(() => {
+                statusTextElement.textContent = statusText;
+                statusTextElement.style.opacity = '1';
+            }, 150);
+
+            // Notification si le statut a changé
+            if (etat !== previousStatus) {
+                if (typeof showToast === 'function') {
+                    showToast(`Statut de votre commande : ${statusText}`, 'success');
+                }
+                previousStatus = etat;
+            }
+        }
+
+        // Fonction pour vérifier le statut de la commande
+        async function checkCommandeStatus() {
+            try {
+                const response = await fetch(`@Url.Action("GetCommandeStatus", "Commande")?id=${commandeId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    updateUI(data.etatCommande);
+                }
+            } catch (error) {
+                console.error('Erreur lors de la vérification du statut:', error);
+            }
+        }
+
+        // Mettre à jour le statut au chargement de la page
+        updateUI(previousStatus);
+
+        // Vérifier le statut toutes les 10 secondes
+        setInterval(checkCommandeStatus, 10000);
+    </script>
+}

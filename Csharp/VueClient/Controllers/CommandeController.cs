@@ -30,6 +30,7 @@ public class CommandeController : Controller
         if (!panier.Any())
         {
             TempData["ErrorMessage"] = "Votre panier est vide";
+            TempData["NotificationType"] = "error";
             return RedirectToAction("Index", "Panier");
         }
 
@@ -46,6 +47,7 @@ public class CommandeController : Controller
         if (typeLivraisonEnum == TypeLivraisonEnum.A_LIVRER && !idZone.HasValue)
         {
             TempData["ErrorMessage"] = "Veuillez sélectionner une zone de livraison";
+            TempData["NotificationType"] = "error";
             return RedirectToAction("Index", "Panier", new { typeLivraison });
         }
 
@@ -95,11 +97,14 @@ public class CommandeController : Controller
             );
 
             TempData["SuccessMessage"] = "Votre commande a été créée avec succès !";
+            TempData["NotificationType"] = "success";
+            TempData["CommandeId"] = idCommande;
             return RedirectToAction("Details", new { id = idCommande });
         }
         catch (Exception ex)
         {
             TempData["ErrorMessage"] = ex.Message;
+            TempData["NotificationType"] = "error";
             return RedirectToAction("Index", "Panier");
         }
     }
@@ -114,10 +119,36 @@ public class CommandeController : Controller
         if (commande == null)
         {
             TempData["ErrorMessage"] = "Commande non trouvée";
+            TempData["NotificationType"] = "error";
             return RedirectToAction("Index", "Catalogue");
         }
 
         return View(commande);
+    }
+
+    /// <summary>
+    /// API pour récupérer l'état d'une commande (pour le suivi en temps réel)
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetCommandeStatus(int id)
+    {
+        var commande = await _context.Commandes
+            .Include(c => c.Paiement)
+            .FirstOrDefaultAsync(c => c.Id == id);
+
+        if (commande == null)
+        {
+            return NotFound();
+        }
+
+        return Json(new
+        {
+            id = commande.Id,
+            etatCommande = commande.EtatCommande.ToString(),
+            statutPaiement = commande.Paiement?.StatutPaiement.ToString(),
+            dateCommande = commande.DateCommande,
+            montantTotal = commande.MontantTotal
+        });
     }
 
     /// <summary>

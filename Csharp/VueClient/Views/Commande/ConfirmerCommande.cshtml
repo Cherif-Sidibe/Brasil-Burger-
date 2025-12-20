@@ -6,17 +6,17 @@
     var total = ViewBag.Total ?? 0m;
     var typeLivraison = ViewBag.TypeLivraison;
     var idZone = ViewBag.IdZone;
-    
+
     string typeLivraisonText = typeLivraison?.ToString() switch
     {
         "SUR_PLACE" => "Sur place",
-        "A_RECUPERER" => "À emporter",
+        "A_RECUPERER" => "À récupérer",
         "A_LIVRER" => "Livraison",
         _ => "Sur place"
     };
 }
 
-<link rel="stylesheet" href="~/css/catalogue.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" />
 
 <style>
     :root {
@@ -25,6 +25,11 @@
         --brasil-gray: #0f0f0f;
         --brasil-gray-light: #1a1a1a;
         --brasil-gold: #ffb800;
+    }
+
+    body {
+        background-color: var(--brasil-dark);
+        color: white;
     }
 
     .main-container {
@@ -85,6 +90,10 @@
         cursor: pointer;
     }
 
+    .payment-method-content {
+        position: relative;
+    }
+
     .payment-method:hover {
         border-color: var(--brasil-yellow);
         transform: translateY(-3px);
@@ -106,11 +115,12 @@
         transition: opacity 0.3s ease;
     }
 
-    .payment-method input[type="radio"]:checked ~ .payment-method-content .checkmark {
+    .payment-method input[type="radio"]:checked~.payment-method-content .checkmark {
         opacity: 1;
     }
 
     .payment-method-icon {
+        color: var(--brasil-yellow);
         margin-bottom: 0.75rem;
         transition: transform 0.3s ease;
         display: flex;
@@ -138,12 +148,69 @@
         font-size: 1.1rem;
         font-weight: 600;
         margin-bottom: 0.5rem;
-        color: white;
     }
 
     .payment-method-desc {
         font-size: 0.85rem;
         color: rgba(255, 255, 255, 0.6);
+    }
+
+    .payment-form {
+        background-color: var(--brasil-dark);
+        border: 2px solid rgba(255, 193, 7, 0.3);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.85rem 1rem 0.85rem 2.75rem;
+        background-color: var(--brasil-gray);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: white;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--brasil-yellow);
+        background-color: rgba(255, 193, 7, 0.05);
+    }
+
+    .payment-info-alert {
+        background-color: rgba(13, 202, 240, 0.1);
+        border: 1px solid rgba(13, 202, 240, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+
+    .payment-info-alert i {
+        color: #0dcaf0;
+        margin-right: 0.5rem;
+    }
+
+    .payment-info-alert ol {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+        padding-left: 1.25rem;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
     }
 
     .summary-card {
@@ -186,7 +253,6 @@
         justify-content: space-between;
         margin-bottom: 0.75rem;
         font-size: 0.95rem;
-        color: white;
     }
 
     .summary-total {
@@ -201,7 +267,6 @@
     .summary-total-label {
         font-size: 1.2rem;
         font-weight: 700;
-        color: white;
     }
 
     .summary-total-amount {
@@ -220,7 +285,6 @@
         align-items: center;
         gap: 0.5rem;
         font-size: 0.9rem;
-        color: white;
     }
 
     .delivery-info i {
@@ -263,6 +327,59 @@
         color: white;
     }
 
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+    }
+
+    .modal-content {
+        background-color: var(--brasil-gray);
+        border: 2px solid var(--brasil-yellow);
+        border-radius: 15px;
+        padding: 3rem;
+        max-width: 500px;
+        text-align: center;
+    }
+
+    .modal-icon {
+        font-size: 5rem;
+        color: var(--brasil-yellow);
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--brasil-yellow);
+        margin-bottom: 1rem;
+    }
+
+    .modal-text {
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .modal-alert {
+        background-color: rgba(255, 193, 7, 0.1);
+        border: 1px solid rgba(255, 193, 7, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
     @@media (max-width: 1024px) {
         .payment-layout {
             grid-template-columns: 1fr;
@@ -274,73 +391,106 @@
     }
 
     @@media (max-width: 768px) {
-        .page-title {
-            font-size: 1.5rem;
-        }
-
         .payment-methods-grid {
             grid-template-columns: 1fr;
         }
 
-        .main-container {
-            padding: 1.5rem 1rem;
+        .page-title {
+            font-size: 1.5rem;
+        }
+    }
+
+    @@keyframes spin {
+        to {
+            transform: rotate(360deg);
         }
     }
 </style>
 
 <main class="main-container">
-    <h1 class="page-title"><i class="bi bi-credit-card"></i> Paiement</h1>
+    <h1 class="page-title">Paiement</h1>
 
     <div class="payment-layout">
-        <form method="post" asp-action="CreerCommande">
-            <input type="hidden" name="typeLivraison" value="@typeLivraison" />
-            <input type="hidden" name="idZone" value="@idZone" />
-
+        <!-- Payment Methods & Form -->
+        <div>
             <!-- Payment Methods -->
             <div class="payment-section">
                 <h2 class="section-title">Choisissez votre méthode de paiement</h2>
 
-                <div class="payment-methods-grid">
-                    <!-- Wave -->
-                    <label class="payment-method">
-                        <input type="radio" name="methodePaiement" value="WAVE" checked />
-                        <div class="payment-method-content">
-                            <div class="payment-method-icon">
-                                <img src="https://play-lh.googleusercontent.com/B2sfLVgRWgV_bk5rtF51w6AieJWXc0qWbyWoaA8pMNp-is41AmvhJYVr95Dq9hT97Es=w240-h480-rw" 
-                                     alt="Wave" style="width: 80px; height: 80px; object-fit: contain" />
-                            </div>
-                            <div class="payment-method-name">Wave</div>
-                            <div class="payment-method-desc">Paiement mobile sécurisé</div>
-                            <div class="checkmark">
-                                <i class="bi bi-check-circle-fill"></i>
-                            </div>
-                        </div>
-                    </label>
+                <form method="post" asp-action="CreerCommande" id="paymentForm">
+                    <input type="hidden" name="typeLivraison" value="@typeLivraison" />
+                    <input type="hidden" name="idZone" value="@idZone" />
+                    <input type="hidden" name="phoneNumber" id="phoneNumberHidden" />
 
-                    <!-- Orange Money -->
-                    <label class="payment-method">
-                        <input type="radio" name="methodePaiement" value="ORANGE_MONEY" />
-                        <div class="payment-method-content">
-                            <div class="payment-method-icon">
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjykY3ZcP7kv0RJjPwvZhDZB6M7Vggpx8P9w&s" 
-                                     alt="Orange Money" style="width: 95px; height: 95px; object-fit: contain" />
+                    <div class="payment-methods-grid">
+                        <!-- Wave -->
+                        <label class="payment-method">
+                            <input type="radio" name="methodePaiement" value="WAVE" checked />
+                            <div class="payment-method-content">
+                                <div class="payment-method-icon">
+                                    <img src="https://play-lh.googleusercontent.com/B2sfLVgRWgV_bk5rtF51w6AieJWXc0qWbyWoaA8pMNp-is41AmvhJYVr95Dq9hT97Es=w240-h480-rw"
+                                        alt="Wave" style="width: 80px; height: 80px; object-fit: contain" />
+                                </div>
+                                <div class="payment-method-name">Wave</div>
+                                <div class="payment-method-desc">Paiement mobile sécurisé</div>
+                                <div class="checkmark">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                </div>
                             </div>
-                            <div class="payment-method-name">Orange Money</div>
-                            <div class="payment-method-desc">Paiement mobile Orange</div>
-                            <div class="checkmark">
-                                <i class="bi bi-check-circle-fill"></i>
+                        </label>
+
+                        <!-- Orange Money -->
+                        <label class="payment-method">
+                            <input type="radio" name="methodePaiement" value="ORANGE_MONEY" />
+                            <div class="payment-method-content">
+                                <div class="payment-method-icon">
+                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjykY3ZcP7kv0RJjPwvZhDZB6M7Vggpx8P9w&s"
+                                        alt="Orange Money" style="width: 95px; height: 95px; object-fit: contain" />
+                                </div>
+                                <div class="payment-method-name">Orange Money</div>
+                                <div class="payment-method-desc">Paiement mobile Orange</div>
+                                <div class="checkmark">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                </div>
                             </div>
-                        </div>
+                        </label>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Payment Form -->
+            <div class="payment-form">
+                <h3 class="section-title">
+                    <i class="bi bi-credit-card-2-front"></i> Informations de paiement
+                </h3>
+
+                <div class="form-group">
+                    <label for="phoneNumber" class="form-label">
+                        <i class="bi bi-telephone-fill"></i> Numéro de téléphone
+                        <span id="methodName">Wave</span>
                     </label>
+                    <div style="position: relative">
+                        <i class="bi bi-phone"
+                            style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--brasil-yellow); z-index: 1;"></i>
+                        <input type="tel" id="phoneNumber" class="form-input" placeholder="77 123 45 67" />
+                    </div>
+                </div>
+
+                <div class="payment-info-alert">
+                    <div>
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Instructions:</strong>
+                    </div>
+                    <ol>
+                        <li>Vous recevrez une notification sur votre téléphone</li>
+                        <li>Entrez votre code secret pour confirmer</li>
+                        <li>Attendez la confirmation de paiement</li>
+                    </ol>
                 </div>
             </div>
+        </div>
 
-            <!-- Summary Card -->
-            <div style="display: none;">
-                <button type="submit" id="hiddenSubmitBtn"></button>
-            </div>
-        </form>
-
+        <!-- Summary Card -->
         <div class="summary-card">
             <h2 class="summary-title">Résumé</h2>
 
@@ -348,7 +498,7 @@
                 @foreach (var item in panier)
                 {
                     <div class="summary-item">
-                        <span>@item.Nom (x@(item.Quantite))</span>
+                        <span>@item.Nom (x@item.Quantite)</span>
                         <span>@item.Total.ToString("N0") FCFA</span>
                     </div>
                 }
@@ -372,27 +522,99 @@
             </div>
 
             <div class="delivery-info">
-                <i class="bi bi-@(typeLivraison?.ToString() == "SUR_PLACE" ? "shop" : typeLivraison?.ToString() == "A_RECUPERER" ? "bag" : "truck")"></i>
+                <i class="bi bi-shop"></i>
                 <span><strong>Type de commande:</strong> @typeLivraisonText</span>
             </div>
 
-            <button type="button" class="btn-confirm" onclick="document.getElementById('hiddenSubmitBtn').click()">
+            <button type="button" class="btn-confirm" id="confirmPaymentBtn">
                 <i class="bi bi-check-circle"></i>
-                <span>Confirmer le Paiement</span>
+                <span>Procéder Au Paiement</span>
             </button>
 
-            <a asp-controller="Panier" asp-action="Index" class="btn-back">
+            <a href="@Url.Action("Index", "Panier")" class="btn-back">
                 <i class="bi bi-arrow-left"></i> Retour au panier
             </a>
         </div>
     </div>
 </main>
 
-@section Scripts {
-    <script>
-        // Mettre à jour le badge du panier
-        if (typeof updateCartBadge === 'function') {
-            updateCartBadge();
+<!-- Confirmation Modal -->
+<div class="modal-overlay" id="confirmationModal">
+    <div class="modal-content">
+        <div class="modal-icon">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <h2 class="modal-title">Commande confirmée !</h2>
+        <p class="modal-text">
+            Votre commande a été enregistrée avec succès.<br />
+            <span id="paymentMethodText"></span>
+        </p>
+        <div class="modal-alert">
+            <i class="bi bi-clock"></i>
+            Votre commande est en préparation !
+            <strong>Suivez son avancement en temps réel.</strong>
+        </div>
+        <button class="btn-confirm" onclick="document.getElementById('paymentForm').submit();">
+            <i class="bi bi-receipt"></i>
+            <span>Suivre ma commande</span>
+        </button>
+        <a href="@Url.Action("Index", "Home")" class="btn-back">
+            <i class="bi bi-house"></i> Retour à l'accueil
+        </a>
+    </div>
+</div>
+
+<script>    // Payment method selection
+    const paymentRadios = document.querySelectorAll('input[name="methodePaiement"]');
+    const methodName = document.getElementById('methodName');
+
+    paymentRadios.forEach(radio => {
+        radio.addEventListener('change', function () {
+            methodName.textContent = this.value === 'WAVE' ? 'Wave' : 'Orange Money';
+        });
+    });
+
+    // Confirm payment
+    const confirmBtn = document.getElementById('confirmPaymentBtn');
+    const modal = document.getElementById('confirmationModal');
+    const paymentMethodText = document.getElementById('paymentMethodText');
+
+    confirmBtn.addEventListener('click', function () {
+        const phoneNumber = document.getElementById('phoneNumber').value;
+        const selectedMethod = document.querySelector('input[name="methodePaiement"]:checked').value;
+
+        // Validate phone number
+        if (!phoneNumber) {
+            alert('Veuillez entrer votre numéro de téléphone');
+            return;
         }
-    </script>
-}
+
+        // Set hidden field
+        document.getElementById('phoneNumberHidden').value = phoneNumber;
+
+        // Show loading state
+        confirmBtn.innerHTML = '<span style="display: inline-block; width: 1rem; height: 1rem; border: 2px solid #000; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite;"></span> Traitement en cours...';
+        confirmBtn.disabled = true;
+
+        // Simulate payment processing
+        setTimeout(() => {
+            const methodText = selectedMethod === 'WAVE'
+                ? 'Paiement effectué via Wave.'
+                : 'Paiement effectué via Orange Money.';
+
+            paymentMethodText.textContent = methodText;
+            modal.classList.add('active');
+
+            // Reset button
+            confirmBtn.innerHTML = '<i class="bi bi-check-circle"></i><span>Procéder Au Paiement</span>';
+            confirmBtn.disabled = false;
+        }, 2000);
+    });
+
+    // Close modal on click outside
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+        }
+    });
+</script>

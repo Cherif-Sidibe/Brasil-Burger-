@@ -57,13 +57,18 @@
                     </p>
                     <div class="product-footer">
                         <span class="product-price">@menu.Prix.ToString("N0") FCFA</span>
-                        <form method="post" asp-controller="Panier" asp-action="Ajouter" style="display: inline;">
-                            <input type="hidden" name="id" value="@menu.Id" />
-                            <input type="hidden" name="type" value="menu" />
-                            <button type="submit" class="add-btn">
-                                <i class="bi bi-cart-plus"></i> Ajouter
-                            </button>
-                        </form>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a asp-action="MenuDetails" asp-route-id="@menu.Id" class="add-btn" style="text-decoration: none; background-color: transparent; border: 2px solid var(--brasil-yellow); color: var(--brasil-yellow);">
+                                <i class="bi bi-eye"></i> Détails
+                            </a>
+                            <form method="post" asp-controller="Panier" asp-action="Ajouter" style="display: inline;">
+                                <input type="hidden" name="id" value="@menu.Id" />
+                                <input type="hidden" name="type" value="menu" />
+                                <button type="submit" class="add-btn">
+                                    <i class="bi bi-cart-plus"></i> Ajouter
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -86,13 +91,18 @@
                     <p class="product-description">@burger.Description</p>
                     <div class="product-footer">
                         <span class="product-price">@burger.Prix.ToString("N0") FCFA</span>
-                        <form method="post" asp-controller="Panier" asp-action="Ajouter" style="display: inline;">
-                            <input type="hidden" name="id" value="@burger.Id" />
-                            <input type="hidden" name="type" value="burger" />
-                            <button type="submit" class="add-btn">
-                                <i class="bi bi-cart-plus"></i> Ajouter
-                            </button>
-                        </form>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a asp-action="BurgerDetails" asp-route-id="@burger.Id" class="add-btn" style="text-decoration: none; background-color: transparent; border: 2px solid var(--brasil-yellow); color: var(--brasil-yellow);">
+                                <i class="bi bi-eye"></i> Détails
+                            </a>
+                            <form method="post" asp-controller="Panier" asp-action="Ajouter" style="display: inline;">
+                                <input type="hidden" name="id" value="@burger.Id" />
+                                <input type="hidden" name="type" value="burger" />
+                                <button type="submit" class="add-btn">
+                                    <i class="bi bi-cart-plus"></i> Ajouter
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

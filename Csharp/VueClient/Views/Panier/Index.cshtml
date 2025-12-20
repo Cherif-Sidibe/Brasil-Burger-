@@ -1,0 +1,710 @@
+@model List<VueClient.ViewModels.PanierItem>
+@{
+    ViewData["Title"] = "Mon Panier";
+    var sousTotal = ViewBag.SousTotal ?? 0m;
+    var fraisLivraison = ViewBag.FraisLivraison ?? 0m;
+    var total = ViewBag.Total ?? 0m;
+}
+
+<link rel="stylesheet" href="~/css/catalogue.css" />
+
+<style>
+    .main-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--brasil-yellow);
+        margin-bottom: 2rem;
+    }
+
+    .cart-layout {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 2rem;
+    }
+
+    .cart-items {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .empty-cart {
+        text-align: center;
+        padding: 4rem 2rem;
+        background-color: var(--brasil-gray);
+        border: 2px solid rgba(255, 193, 7, 0.3);
+        border-radius: 15px;
+    }
+
+    .empty-cart i {
+        font-size: 5rem;
+        color: var(--brasil-yellow);
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-cart h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: white;
+    }
+
+    .empty-cart p {
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 2rem;
+    }
+
+    .cart-item {
+        background-color: var(--brasil-gray);
+        border: 3px solid rgba(255, 193, 7, 0.5);
+        border-radius: 15px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .cart-item:hover {
+        border-color: var(--brasil-yellow);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(255, 193, 7, 0.3);
+    }
+
+    .item-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 2px solid var(--brasil-yellow);
+    }
+
+    .item-details {
+        flex: 1;
+    }
+
+    .item-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 0.25rem;
+    }
+
+    .item-category {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 0.5rem;
+    }
+
+    .item-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .badge-burger {
+        background-color: var(--brasil-yellow);
+        color: var(--brasil-dark);
+    }
+
+    .badge-menu {
+        background-color: var(--brasil-yellow);
+        color: var(--brasil-dark);
+    }
+
+    .badge-complement {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .item-controls {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background-color: rgba(0, 0, 0, 0.3);
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        border: 2px solid rgba(255, 193, 7, 0.3);
+    }
+
+    .qty-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 2px solid var(--brasil-yellow);
+        background: transparent;
+        color: var(--brasil-yellow);
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .qty-btn:hover {
+        background-color: var(--brasil-yellow);
+        color: var(--brasil-dark);
+        transform: scale(1.1);
+    }
+
+    .qty-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+        border-color: rgba(255, 193, 7, 0.3);
+    }
+
+    .qty-btn:disabled:hover {
+        background-color: transparent;
+        color: var(--brasil-yellow);
+        transform: scale(1);
+    }
+
+    .qty-display {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: white;
+        min-width: 30px;
+        text-align: center;
+    }
+
+    .item-price {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--brasil-yellow);
+    }
+
+    .btn-remove {
+        background: transparent;
+        border: none;
+        color: #dc3545;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        padding: 0.5rem;
+        border-radius: 8px;
+    }
+
+    .btn-remove:hover {
+        color: #ff0000;
+        background-color: rgba(220, 53, 69, 0.1);
+        transform: scale(1.15);
+    }
+
+    .summary-card {
+        background-color: var(--brasil-gray);
+        border: 3px solid rgba(255, 193, 7, 0.5);
+        border-radius: 15px;
+        padding: 2rem;
+        position: sticky;
+        top: 80px;
+    }
+
+    .summary-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--brasil-yellow);
+        margin-bottom: 1.5rem;
+    }
+
+    .order-type-section {
+        margin-bottom: 2rem;
+    }
+
+    .section-label {
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 1rem;
+    }
+
+    .order-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .option-btn {
+        background-color: rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(255, 193, 7, 0.3);
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .option-btn:hover {
+        border-color: var(--brasil-yellow);
+        background-color: rgba(255, 193, 7, 0.1);
+    }
+
+    .option-btn.active {
+        background-color: rgba(255, 193, 7, 0.2);
+        border-color: var(--brasil-yellow);
+    }
+
+    .option-btn input[type="radio"] {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--brasil-yellow);
+    }
+
+    .summary-details {
+        border-top: 2px solid rgba(255, 255, 255, 0.1);
+        padding-top: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+    }
+
+    .summary-row.total {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid rgba(255, 255, 255, 0.1);
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+
+    .summary-row.total .amount {
+        color: var(--brasil-yellow);
+        font-size: 1.5rem;
+    }
+
+    .btn-checkout {
+        width: 100%;
+        background-color: var(--brasil-yellow);
+        color: var(--brasil-dark);
+        border: none;
+        padding: 1rem;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1.5rem;
+        text-transform: uppercase;
+    }
+
+    .btn-checkout:hover {
+        background-color: #ffb300;
+        transform: scale(1.02);
+        box-shadow: 0 5px 20px rgba(255, 193, 7, 0.5);
+    }
+
+    .btn-checkout:active {
+        transform: scale(0.98);
+    }
+
+    .btn-menu-empty {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background-color: var(--brasil-yellow);
+        color: var(--brasil-dark);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-menu-empty i {
+        font-size: 1.2rem;
+    }
+
+    .btn-menu-empty:hover {
+        background-color: #ffb300;
+        transform: scale(1.05);
+        box-shadow: 0 5px 20px rgba(255, 193, 7, 0.5);
+        color: var(--brasil-dark);
+    }
+
+    .btn-menu-empty:active {
+        transform: scale(0.98);
+    }
+
+    @@media (max-width: 768px) {
+        .page-title {
+            font-size: 1.8rem;
+        }
+
+        .cart-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-card {
+            position: static;
+            order: -1;
+        }
+
+        .cart-item {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .item-image {
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+        }
+
+        .item-controls {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .quantity-controls {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="main-content">
+    <h1 class="page-title"><i class="bi bi-cart3"></i> Mon Panier</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-cart">
+            <i class="bi bi-cart-x"></i>
+            <h3>Votre panier est vide</h3>
+            <p>Ajoutez des articles depuis notre menu pour commencer</p>
+            <a asp-controller="Catalogue" asp-action="Index" class="btn-menu-empty">
+                Voir le Menu
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="cart-layout">
+            <!-- Cart Items -->
+            <div class="cart-items">
+                @foreach (var item in Model)
+                {
+                    <div class="cart-item">
+                        @if (!string.IsNullOrEmpty(item.Image))
+                        {
+                            <img src="@item.Image" alt="@item.Nom" class="item-image" />
+                        }
+                        else
+                        {
+                            <img src="https://via.placeholder.com/120x120/1a1a1a/ffc107?text=@item.Nom" alt="@item.Nom" class="item-image" />
+                        }
+                        <div class="item-details">
+                            <h3 class="item-name">@item.Nom</h3>
+                            <p class="item-category">@item.Categorie</p>
+                            @if (item.Type == "burger")
+                            {
+                                <span class="item-badge badge-burger"><i class="bi bi-fire"></i>Burger</span>
+                            }
+                            else if (item.Type == "menu")
+                            {
+                                <span class="item-badge badge-menu"><i class="bi bi-box-seam"></i>Menu</span>
+                            }
+                            else
+                            {
+                                <span class="item-badge badge-complement"><i class="bi bi-cup-straw"></i>Complément</span>
+                            }
+                            @if (!string.IsNullOrEmpty(item.Description))
+                            {
+                                <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.5); margin-top: 0.5rem;">@item.Description</p>
+                            }
+                        </div>
+                        <div class="item-controls">
+                            <div class="quantity-controls">
+                                <form method="post" asp-action="ModifierQuantite" style="display: inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input type="hidden" name="type" value="@item.Type" />
+                                    <input type="hidden" name="quantite" value="@(item.Quantite - 1)" />
+                                    <button type="submit" class="qty-btn" @(item.Quantite <= 1 ? "disabled" : "")>
+                                        <i class="bi bi-dash"></i>
+                                    </button>
+                                </form>
+                                <span class="qty-display">@item.Quantite</span>
+                                <form method="post" asp-action="ModifierQuantite" style="display: inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input type="hidden" name="type" value="@item.Type" />
+                                    <input type="hidden" name="quantite" value="@(item.Quantite + 1)" />
+                                    <button type="submit" class="qty-btn">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <span class="item-price">@item.Total.ToString("N0") FCFA</span>
+                            <form method="post" asp-action="Retirer" id="form-retirer-@item.Id-@item.Type" style="display: inline;">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <input type="hidden" name="type" value="@item.Type" />
+                                <button type="button" class="btn-remove" onclick="confirmerSuppression('@item.Id', '@item.Type', '@item.Nom')" title="Supprimer">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Summary -->
+            <div class="summary-card">
+                <h2 class="summary-title">Résumé</h2>
+
+                <div class="order-type-section">
+                    <p class="section-label">Type de commande</p>
+                    <div class="order-options">
+                        <label class="option-btn active">
+                            <input type="radio" name="orderType" value="dine-in" checked />
+                            <i class="bi bi-shop"></i>
+                            <span>Sur place</span>
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="orderType" value="takeaway" />
+                            <i class="bi bi-bag"></i>
+                            <span>À emporter</span>
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="orderType" value="delivery" />
+                            <i class="bi bi-truck"></i>
+                            <span>Livraison</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="summary-details">
+                    <div class="summary-row">
+                        <span>Sous-total</span>
+                        <span class="amount">@sousTotal.ToString("N0") FCFA</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Frais de livraison</span>
+                        <span class="amount">@fraisLivraison.ToString("N0") FCFA</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span class="amount">@total.ToString("N0") FCFA</span>
+                    </div>
+                </div>
+
+                <button class="btn-checkout" onclick="procederPaiement()">
+                    Procéder Au Paiement
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Modal de confirmation -->
+<div id="confirmModal" class="confirm-modal">
+    <div class="confirm-modal-content">
+        <div class="confirm-modal-header">
+            <i class="bi bi-exclamation-triangle"></i>
+            <h3>Confirmation</h3>
+        </div>
+        <div class="confirm-modal-body">
+            <p id="confirmMessage">Voulez-vous vraiment retirer cet article du panier ?</p>
+        </div>
+        <div class="confirm-modal-footer">
+            <button class="btn-cancel" onclick="fermerModal()">Annuler</button>
+            <button class="btn-confirm" onclick="supprimerArticle()">Supprimer</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .confirm-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .confirm-modal.show {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .confirm-modal-content {
+        background-color: var(--brasil-gray);
+        border: 3px solid var(--brasil-yellow);
+        border-radius: 15px;
+        max-width: 500px;
+        width: 90%;
+        animation: slideDown 0.3s ease;
+    }
+
+    @@keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .confirm-modal-header {
+        padding: 1.5rem;
+        border-bottom: 2px solid rgba(255, 193, 7, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .confirm-modal-header i {
+        font-size: 2rem;
+        color: #ffc107;
+    }
+
+    .confirm-modal-header h3 {
+        margin: 0;
+        color: white;
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+
+    .confirm-modal-body {
+        padding: 2rem 1.5rem;
+    }
+
+    .confirm-modal-body p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .confirm-modal-footer {
+        padding: 1.5rem;
+        border-top: 2px solid rgba(255, 193, 7, 0.3);
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+
+    .btn-cancel, .btn-confirm {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .btn-cancel {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-cancel:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .btn-confirm {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-confirm:hover {
+        background-color: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Mettre à jour le badge du panier
+        if (typeof updateCartBadge === 'function') {
+            updateCartBadge();
+        }
+
+        let currentItemToDelete = null;
+
+        // Order type selection
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Procéder au paiement
+        function procederPaiement() {
+            showToast('Fonctionnalité de paiement à venir', 'error');
+        }
+
+        // Confirmer suppression
+        function confirmerSuppression(id, type, nom) {
+            currentItemToDelete = { id, type };
+            document.getElementById('confirmMessage').textContent = `Voulez-vous vraiment retirer "${nom}" du panier ?`;
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        // Fermer modal
+        function fermerModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+            currentItemToDelete = null;
+        }
+
+        // Supprimer article
+        function supprimerArticle() {
+            if (currentItemToDelete) {
+                const form = document.getElementById(`form-retirer-${currentItemToDelete.id}-${currentItemToDelete.type}`);
+                if (form) {
+                    form.submit();
+                }
+            }
+            fermerModal();
+        }
+
+        // Fermer modal en cliquant en dehors
+        document.getElementById('confirmModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                fermerModal();
+            }
+        });
+    </script>
+}

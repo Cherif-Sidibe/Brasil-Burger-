@@ -1,0 +1,271 @@
+@model VueClient.Models.Menu
+@{
+    ViewData["Title"] = Model.Nom;
+}
+
+<link rel="stylesheet" href="~/css/catalogue.css" />
+
+<div class="main-content">
+    <!-- Fil d'Ariane -->
+    <nav aria-label="breadcrumb" style="margin-bottom: 2rem;">
+        <ol class="breadcrumb" style="background: transparent; padding: 0;">
+            <li class="breadcrumb-item">
+                <a asp-action="Index" style="color: var(--brasil-yellow); text-decoration: none;">
+                    <i class="bi bi-house-door"></i> Catalogue
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page" style="color: white;">@Model.Nom</li>
+        </ol>
+    </nav>
+
+    <!-- Détails du menu -->
+    <div class="product-detail-container">
+        <div class="product-detail-grid">
+            <!-- Image du menu -->
+            <div class="product-detail-image">
+                @if (!string.IsNullOrEmpty(Model.Image))
+                {
+                    <img src="@Model.Image" alt="@Model.Nom" />
+                }
+                else
+                {
+                    <img src="https://via.placeholder.com/500x400/1a1a1a/ffc107?text=@Model.Nom" alt="@Model.Nom" />
+                }
+            </div>
+
+            <!-- Informations du menu -->
+            <div class="product-detail-info">
+                <h1 class="product-detail-name">
+                    <i class="bi bi-box-seam"></i> @Model.Nom
+                </h1>
+                
+                <div class="product-detail-description">
+                    <p>@Model.Description</p>
+                </div>
+
+                <!-- Composition du menu -->
+                <div class="menu-composition">
+                    <h5 style="color: var(--brasil-yellow); margin-bottom: 1rem;">
+                        <i class="bi bi-list-check"></i> Composition du menu :
+                    </h5>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-icon">
+                            <i class="bi bi-Fire"></i>
+                        </div>
+                        <div class="menu-item-details">
+                            <strong>Burger:</strong> @Model.Burger.Nom
+                            <br>
+                            <small style="color: rgba(255, 255, 255, 0.6);">@Model.Burger.Description</small>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="menu-item-icon">
+                            <i class="bi bi-cup-straw"></i>
+                        </div>
+                        <div class="menu-item-details">
+                            <strong>Boisson:</strong> @Model.ComplementBoisson.Nom
+                            <br>
+                            <small style="color: rgba(255, 255, 255, 0.6);">@Model.ComplementBoisson.Description</small>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="menu-item-icon">
+                            <i class="bi bi-basket"></i>
+                        </div>
+                        <div class="menu-item-details">
+                            <strong>Frites:</strong> @Model.ComplementFrite.Nom
+                            <br>
+                            <small style="color: rgba(255, 255, 255, 0.6);">@Model.ComplementFrite.Description</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-detail-footer">
+                    <div class="product-detail-price">
+                        @Model.Prix.ToString("N0") FCFA
+                    </div>
+                    <form method="post" asp-controller="Panier" asp-action="Ajouter">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="type" value="menu" />
+                        <button type="submit" class="add-to-cart-btn">
+                            <i class="bi bi-cart-plus"></i> Ajouter au panier
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: ">";
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .product-detail-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .product-detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        background-color: var(--brasil-gray);
+        border: 2px solid rgba(255, 193, 7, 0.3);
+        border-radius: 15px;
+        padding: 2rem;
+    }
+
+    .product-detail-image {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+    }
+
+    .product-detail-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        transition: transform 0.4s ease;
+    }
+
+    .product-detail-image:hover img {
+        transform: scale(1.05);
+    }
+
+    .product-detail-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .product-detail-name {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--brasil-yellow);
+        margin-bottom: 1.5rem;
+    }
+
+    .product-detail-description {
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .menu-composition {
+        background: rgba(255, 193, 7, 0.05);
+        border: 1px solid rgba(255, 193, 7, 0.2);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .menu-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .menu-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .menu-item:hover {
+        background: rgba(255, 193, 7, 0.1);
+        transform: translateX(5px);
+    }
+
+    .menu-item-icon {
+        font-size: 1.5rem;
+        color: var(--brasil-yellow);
+        display: flex;
+        align-items: center;
+    }
+
+    .menu-item-details {
+        flex: 1;
+        color: white;
+        line-height: 1.5;
+    }
+
+    .product-detail-footer {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        margin-top: auto;
+        padding-top: 2rem;
+        border-top: 2px solid rgba(255, 193, 7, 0.2);
+    }
+
+    .product-detail-price {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--brasil-yellow);
+    }
+
+    .add-to-cart-btn {
+        background-color: var(--brasil-yellow);
+        color: var(--brasil-dark);
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .add-to-cart-btn:hover {
+        background-color: #ffb300;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(255, 193, 7, 0.4);
+    }
+
+    .add-to-cart-btn:active {
+        transform: translateY(-1px);
+    }
+
+    @@media (max-width: 768px) {
+        .product-detail-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            padding: 1.5rem;
+        }
+
+        .product-detail-name {
+            font-size: 1.5rem;
+        }
+
+        .product-detail-price {
+            font-size: 1.5rem;
+        }
+
+        .product-detail-footer {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: stretch;
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .menu-item {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
+</style>

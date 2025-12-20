@@ -34,8 +34,9 @@
             </nav>
 
             <div class="nav-icons">
-                <button class="icon-btn" onclick="window.location.href='@Url.Action("Index", "Panier")'">
+                <button class="icon-btn" onclick="window.location.href='@Url.Action("Index", "Panier")'" style="position: relative;">
                     <i class="bi bi-cart3"></i>
+                    <span id="cart-badge" class="cart-badge" style="display: none;">0</span>
                 </button>
                 <div class="dropdown">
                     <button class="account-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -73,12 +74,189 @@
         </div>
     </header>
 
+    <!-- Notification Toast -->
+    <div id="toast-container" style="position: fixed; top: 80px; right: 20px; z-index: 9999;"></div>
+
     <main>
         @RenderBody()
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const navMenu = document.getElementById('navMenu');
+            const menuToggle = document.querySelector('.mobile-menu-toggle i');
+
+            navMenu.classList.toggle('active');
+
+            if (navMenu.classList.contains('active')) {
+                menuToggle.className = 'bi bi-x-lg';
+            } else {
+                menuToggle.className = 'bi bi-list';
+            }
+        }
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    const navMenu = document.getElementById('navMenu');
+                    const menuToggle = document.querySelector('.mobile-menu-toggle i');
+                    navMenu.classList.remove('active');
+                    menuToggle.className = 'bi bi-list';
+                }
+            });
+        });
+
+        // Toast notification system
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toast-container');
+            
+            const toast = document.createElement('div');
+            toast.className = `toast-notification toast-${type}`;
+            toast.innerHTML = `
+                <div class="toast-content">
+                    <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-circle-fill'}"></i>
+                    <span>${message}</span>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <i class="bi bi-x"></i>
+                </button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Animation d'entrée
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            // Auto-suppression après 3 secondes
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Afficher les messages TempData
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+            showToast('@TempData["SuccessMessage"]', 'success');
+            </text>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+            showToast('@TempData["ErrorMessage"]', 'error');
+            </text>
+        }
+    </script>
+    <style>
+        .toast-notification {
+            background: var(--brasil-gray);
+            border: 2px solid;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            min-width: 300px;
+            max-width: 400px;
+            opacity: 0;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .toast-notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            border-color: #28a745;
+        }
+
+        .toast-error {
+            border-color: #dc3545;
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .toast-success .toast-content i {
+            color: #28a745;
+            font-size: 1.5rem;
+        }
+
+        .toast-error .toast-content i {
+            color: #dc3545;
+            font-size: 1.5rem;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast-close:hover {
+            color: white;
+            transform: scale(1.2);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+    </style>
+    <script>
+        // Fonction pour mettre à jour le badge du panier
+        function updateCartBadge() {
+            fetch('@Url.Action("ObtenirNombreArticles", "Panier")')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('cart-badge');
+                    if (data.nombre > 0) {
+                        badge.textContent = data.nombre;
+                        badge.style.display = 'flex';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('Erreur lors de la mise à jour du badge:', error));
+        }
+
+        // Mettre à jour le badge au chargement de la page
+        document.addEventListener('DOMContentLoaded', updateCartBadge);
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

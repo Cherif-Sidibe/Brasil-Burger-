@@ -21,14 +21,10 @@ public class CommandeController : Controller
         _context = context;
     }
 
-    /// <summary>
-    /// Affiche la page de sélection du mode de paiement (GET)
-    /// </summary>
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> ConfirmerCommande(string typeLivraison, int? idZone)
     {
-        // Vérifier que le panier n'est pas vide
         var panier = _panierService.ObtenirPanier();
         if (!panier.Any())
         {
@@ -37,7 +33,6 @@ public class CommandeController : Controller
             return RedirectToAction("Index", "Panier");
         }
 
-        // Convertir le type de livraison depuis le format string ou depuis l'enum
         TypeLivraisonEnum typeLivraisonEnum;
         if (Enum.TryParse<TypeLivraisonEnum>(typeLivraison, out var parsedEnum))
         {
@@ -54,7 +49,6 @@ public class CommandeController : Controller
             };
         }
 
-        // Valider la zone si livraison
         if (typeLivraisonEnum == TypeLivraisonEnum.A_LIVRER && !idZone.HasValue)
         {
             TempData["ErrorMessage"] = "Veuillez sélectionner une zone de livraison";
@@ -62,7 +56,6 @@ public class CommandeController : Controller
             return RedirectToAction("Index", "Panier", new { typeLivraison });
         }
 
-        // Calculer les frais de livraison si nécessaire
         decimal fraisLivraison = 0;
         if (idZone.HasValue)
         {
@@ -76,7 +69,6 @@ public class CommandeController : Controller
         var sousTotal = _panierService.ObtenirTotal();
         var total = sousTotal + fraisLivraison;
 
-        // Passer les infos à la vue de paiement
         ViewBag.TypeLivraison = typeLivraisonEnum;
         ViewBag.IdZone = idZone;
         ViewBag.SousTotal = sousTotal;
@@ -87,16 +79,12 @@ public class CommandeController : Controller
         return View();
     }
 
-    /// <summary>
-    /// Traite la création de la commande
-    /// </summary>
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreerCommande(string typeLivraison, int? idZone, string methodePaiement, string? adresseLivraison)
     {
         try
         {
-            // Récupérer l'ID de l'utilisateur connecté
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int idClient))
             {
@@ -104,11 +92,9 @@ public class CommandeController : Controller
                 return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("ConfirmerCommande", "Commande") });
             }
 
-            // Convertir les strings en enums
             TypeLivraisonEnum typeLivraisonEnum = Enum.Parse<TypeLivraisonEnum>(typeLivraison);
             MethodePaiementEnum methodePaiementEnum = Enum.Parse<MethodePaiementEnum>(methodePaiement);
 
-            // Créer la commande
             var idCommande = await _commandeService.CreerCommandeAsync(
                 idClient,
                 typeLivraisonEnum,
@@ -130,9 +116,6 @@ public class CommandeController : Controller
         }
     }
 
-    /// <summary>
-    /// Affiche les détails d'une commande
-    /// </summary>
     [Authorize]
     public async Task<IActionResult> Details(int id)
     {
@@ -145,7 +128,6 @@ public class CommandeController : Controller
             return RedirectToAction("Index", "Catalogue");
         }
 
-        // Vérifier que la commande appartient à l'utilisateur connecté
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int idClient) || commande.IdClient != idClient)
         {
@@ -157,9 +139,6 @@ public class CommandeController : Controller
         return View(commande);
     }
 
-    /// <summary>
-    /// API pour récupérer l'état d'une commande (pour le suivi en temps réel)
-    /// </summary>
     [HttpGet]
     public async Task<IActionResult> GetCommandeStatus(int id)
     {
@@ -182,13 +161,9 @@ public class CommandeController : Controller
         });
     }
 
-    /// <summary>
-    /// Affiche l'historique des commandes du client
-    /// </summary>
     [Authorize]
     public async Task<IActionResult> MesCommandes()
     {
-        // Récupérer l'ID de l'utilisateur connecté
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int idClient))
         {
@@ -201,9 +176,6 @@ public class CommandeController : Controller
         return View(commandes);
     }
 
-    /// <summary>
-    /// Page principale des commandes (redirection vers MesCommandes)
-    /// </summary>
     public IActionResult Index()
     {
         return RedirectToAction("MesCommandes");

@@ -31,7 +31,6 @@ namespace VueClient.Controllers
         {
             ViewData["ReturnUrl"] = returnUrl ?? string.Empty;
             
-            // Validation des champs
             if (string.IsNullOrWhiteSpace(emailConnexion))
             {
                 ModelState.AddModelError("emailConnexion", "L'email est obligatoire.");
@@ -46,13 +45,11 @@ namespace VueClient.Controllers
                 ModelState.AddModelError("passwordConnexion", "Le mot de passe est obligatoire.");
             }
 
-            // Si des erreurs de validation existent, retourner la vue
             if (!ModelState.IsValid)
             {
                 return View();
             }
 
-            // Tentative d'authentification
             var user = await _authService.AuthenticateAsync(emailConnexion.Trim().ToLower(), passwordConnexion);
             if (user == null)
             {
@@ -60,24 +57,20 @@ namespace VueClient.Controllers
                 return View();
             }
 
-            // Vérifier si l'utilisateur est archivé
             if (user.IsArchive)
             {
                 ModelState.AddModelError(string.Empty, "Ce compte a été désactivé.");
                 return View();
             }
 
-            // Vérifier que l'utilisateur est un CLIENT uniquement
             if (user.Role != RoleEnum.CLIENT)
             {
                 ModelState.AddModelError(string.Empty, "Seuls les clients peuvent se connecter via cette page.");
                 return View();
             }
 
-            // Connexion réussie
             await _authService.SignInAsync(user, rememberMe);
             
-            // Redirection selon le returnUrl ou vers le catalogue
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
@@ -95,7 +88,6 @@ namespace VueClient.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(string nom, string prenom, string telephone, string adresse, string zone, string email, string password, string confirmPassword)
         {
-            // Validation des champs obligatoires
             if (string.IsNullOrWhiteSpace(nom))
             {
                 ModelState.AddModelError("nom", "Le nom est obligatoire.");
@@ -133,31 +125,26 @@ namespace VueClient.Controllers
                 ModelState.AddModelError("confirmPassword", "La confirmation du mot de passe est obligatoire.");
             }
 
-            // Validation de la correspondance des mots de passe
             if (!string.IsNullOrWhiteSpace(password) && !string.IsNullOrWhiteSpace(confirmPassword) && password != confirmPassword)
             {
                 ModelState.AddModelError("confirmPassword", "Les mots de passe ne correspondent pas.");
             }
 
-            // Vérification de l'unicité de l'email
             if (!string.IsNullOrWhiteSpace(email) && await _db.Users.AnyAsync(u => u.Email == email))
             {
                 ModelState.AddModelError("email", "Cet email est déjà utilisé.");
             }
 
-            // Vérification de l'unicité du téléphone
             if (!string.IsNullOrWhiteSpace(telephone) && await _db.Users.AnyAsync(u => u.Telephone == telephone))
             {
                 ModelState.AddModelError("telephone", "Ce numéro de téléphone est déjà utilisé.");
             }
 
-            // Si des erreurs existent, retourner la vue avec les erreurs
             if (!ModelState.IsValid)
             {
                 return View();
             }
 
-            // Création de l'utilisateur
             var user = new User
             {
                 Nom = nom.Trim(),

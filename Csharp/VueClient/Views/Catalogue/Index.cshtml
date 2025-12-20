@@ -11,10 +11,6 @@
         <h1 class="page-title">
             <i class="bi bi-list-ul"></i> Notre Menu
         </h1>
-        <div class="search-box">
-            <i class="bi bi-search"></i>
-            <input type="text" placeholder="Rechercher..." id="searchInput">
-        </div>
     </div>
 
     <!-- Section de filtres -->
@@ -22,16 +18,35 @@
         <div class="filter-container">
             <span class="filter-label">Filtrer par:</span>
             <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">Tous</button>
-                <button class="filter-btn" data-filter="menu">Menus</button>
-                <button class="filter-btn" data-filter="burger">Burgers</button>
-                <button class="filter-btn" data-filter="complement">Compléments</button>
+                <a asp-action="Index" asp-route-filtre="all" 
+                   class="filter-btn @(Model.FiltreActif == "all" ? "active" : "")">
+                    Tous
+                </a>
+                <a asp-action="Index" asp-route-filtre="menu" 
+                   class="filter-btn @(Model.FiltreActif == "menu" ? "active" : "")">
+                    Menus
+                </a>
+                <a asp-action="Index" asp-route-filtre="burger" 
+                   class="filter-btn @(Model.FiltreActif == "burger" ? "active" : "")">
+                    Burgers
+                </a>
+                <a asp-action="Index" asp-route-filtre="complement" 
+                   class="filter-btn @(Model.FiltreActif == "complement" ? "active" : "")">
+                    Compléments
+                </a>
             </div>
         </div>
     </div>
 
     <!-- Grille des produits -->
     <div class="products-grid">
+        @if (!Model.Menus.Any() && !Model.Burgers.Any() && !Model.Boissons.Any() && !Model.Frites.Any())
+        {
+            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: rgba(255, 255, 255, 0.6);">
+                <i class="bi bi-inbox" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                <p style="font-size: 1.2rem;">Aucun produit trouvé pour ce filtre.</p>
+            </div>
+        }
         <!-- Menus -->
         @foreach (var menu in Model.Menus)
         {
@@ -64,6 +79,7 @@
                             <form method="post" asp-controller="Panier" asp-action="Ajouter" style="display: inline;">
                                 <input type="hidden" name="id" value="@menu.Id" />
                                 <input type="hidden" name="type" value="menu" />
+                                <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Catalogue", new { filtre = Model.FiltreActif })" />
                                 <button type="submit" class="add-btn">
                                     <i class="bi bi-cart-plus"></i> Ajouter
                                 </button>
@@ -98,6 +114,7 @@
                             <form method="post" asp-controller="Panier" asp-action="Ajouter" style="display: inline;">
                                 <input type="hidden" name="id" value="@burger.Id" />
                                 <input type="hidden" name="type" value="burger" />
+                                <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Catalogue", new { filtre = Model.FiltreActif })" />
                                 <button type="submit" class="add-btn">
                                     <i class="bi bi-cart-plus"></i> Ajouter
                                 </button>
@@ -128,6 +145,7 @@
                         <form method="post" asp-controller="Panier" asp-action="Ajouter" style="display: inline;">
                             <input type="hidden" name="id" value="@boisson.Id" />
                             <input type="hidden" name="type" value="complement" />
+                            <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Catalogue", new { filtre = Model.FiltreActif })" />
                             <button type="submit" class="add-btn">
                                 <i class="bi bi-cart-plus"></i> Ajouter
                             </button>
@@ -157,6 +175,7 @@
                         <form method="post" asp-controller="Panier" asp-action="Ajouter" style="display: inline;">
                             <input type="hidden" name="id" value="@frite.Id" />
                             <input type="hidden" name="type" value="complement" />
+                            <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Catalogue", new { filtre = Model.FiltreActif })" />
                             <button type="submit" class="add-btn">
                                 <i class="bi bi-cart-plus"></i> Ajouter
                             </button>

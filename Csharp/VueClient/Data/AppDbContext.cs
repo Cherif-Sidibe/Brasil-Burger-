@@ -22,8 +22,6 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Déclarer les enums PostgreSQL pour EF Core (requis avec Npgsql 8.0+)
-        // MapEnum dans Program.cs configure Npgsql, HasPostgresEnum configure EF Core
         modelBuilder.HasPostgresEnum<RoleEnum>("public", "role_enum");
         modelBuilder.HasPostgresEnum<TypeComplementEnum>("public", "type_complement_enum");
         modelBuilder.HasPostgresEnum<EtatCommandeEnum>("public", "etat_commande_enum");
@@ -36,8 +34,6 @@ public class AppDbContext : DbContext
         {
             entity.HasIndex(e => e.Email).IsUnique();
             entity.HasIndex(e => e.Telephone).IsUnique();
-
-            // Le mapping de RoleEnum est géré par HasPostgresEnum ci-dessus
 
             entity.HasMany(e => e.Commandes)
                 .WithOne(e => e.Client)
@@ -55,7 +51,6 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Complement>(entity =>
         {
-            // Le mapping est géré par MapEnum dans Program.cs
         });
 
         modelBuilder.Entity<Zone>(entity =>
@@ -89,8 +84,6 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Commande>(entity =>
         {
-            // Le mapping des enums est géré par MapEnum dans Program.cs
-
             entity.HasOne(e => e.Client)
                 .WithMany(e => e.Commandes)
                 .HasForeignKey(e => e.IdClient)
@@ -119,8 +112,6 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<DetailCommande>(entity =>
         {
-            // Le mapping des enums est géré par MapEnum dans Program.cs
-
             entity.HasOne(e => e.Commande)
                 .WithMany(e => e.DetailCommandes)
                 .HasForeignKey(e => e.IdCommande)
@@ -129,8 +120,6 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Paiement>(entity =>
         {
-            // Le mapping des enums est géré par MapEnum dans Program.cs
-
             entity.HasIndex(e => e.IdCommande).IsUnique();
 
             entity.HasOne(e => e.Commande)

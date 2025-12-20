@@ -21,7 +21,6 @@ public class CustomAuthService
 
     public async Task<User?> AuthenticateAsync(string email, string password)
     {
-        // Normaliser l'email (minuscules et trim)
         var normalizedEmail = email?.Trim().ToLower();
         
         if (string.IsNullOrWhiteSpace(normalizedEmail) || string.IsNullOrWhiteSpace(password))

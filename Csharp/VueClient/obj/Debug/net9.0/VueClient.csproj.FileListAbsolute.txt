@@ -33,7 +33,6 @@ C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\Vu
 C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\VueClient\obj\Debug\net9.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\VueClient\obj\Debug\net9.0\scopedcss\bundle\VueClient.styles.css
 C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\VueClient\obj\Debug\net9.0\scopedcss\projectbundle\VueClient.bundle.scp.css
-C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\VueClient\obj\Debug\net9.0\compressed\b2o1d4hkqu-y2ulvg7d9f.gz
 C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\VueClient\obj\Debug\net9.0\compressed\hmqrnv3uw3-b9sayid5wm.gz
 C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\VueClient\obj\Debug\net9.0\compressed\3klihg41jm-61n19gt1b8.gz
 C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\VueClient\obj\Debug\net9.0\compressed\mjyxiuidb7-xtxxf3hu2r.gz
@@ -108,3 +107,4 @@ C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\Vu
 C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\VueClient\obj\Debug\net9.0\VueClient.pdb
 C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\VueClient\obj\Debug\net9.0\VueClient.genruntimeconfig.cache
 C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\VueClient\obj\Debug\net9.0\ref\VueClient.dll
+C:\Users\cherif\OneDrive\Documents\Cour ISM\L3\S1\Projet Brasil Burger\Csharp\VueClient\obj\Debug\net9.0\compressed\b2o1d4hkqu-knen9nbmsk.gz

@@ -348,6 +348,8 @@ body {
   text-transform: uppercase;
   position: relative;
   overflow: hidden;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .filter-btn::before {

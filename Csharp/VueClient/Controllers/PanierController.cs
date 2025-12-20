@@ -46,11 +46,16 @@ public class PanierController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Ajouter(int id, string type)
+    public async Task<IActionResult> Ajouter(int id, string type, string? returnUrl = null)
     {
         await _panierService.AjouterArticle(id, type);
 
         TempData["SuccessMessage"] = "Article ajouté au panier avec succès !";
+
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            return Redirect(returnUrl);
+        }
 
         var referer = Request.Headers["Referer"].ToString();
         if (!string.IsNullOrEmpty(referer))

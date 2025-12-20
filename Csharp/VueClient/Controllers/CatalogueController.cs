@@ -14,18 +14,43 @@ public class CatalogueController : Controller
         _catalogueService = catalogueService;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string filtre = "all")
     {
         var burgers = await _catalogueService.GetBurgersActifs();
         var menus = await _catalogueService.GetMenusActifs();
         var complements = await _catalogueService.GetComplementsActifs();
 
+        var boissons = complements.Where(c => c.TypeComplement == TypeComplementEnum.BOISSON).ToList();
+        var frites = complements.Where(c => c.TypeComplement == TypeComplementEnum.FRITES).ToList();
+
+        switch (filtre?.ToLower())
+        {
+            case "menu":
+                burgers = new List<Burger>();
+                boissons = new List<Complement>();
+                frites = new List<Complement>();
+                break;
+            case "burger":
+                menus = new List<Menu>();
+                boissons = new List<Complement>();
+                frites = new List<Complement>();
+                break;
+            case "complement":
+                burgers = new List<Burger>();
+                menus = new List<Menu>();
+                break;
+            case "all":
+            default:
+                break;
+        }
+
         var viewModel = new CatalogueViewModel
         {
             Burgers = burgers,
             Menus = menus,
-            Boissons = complements.Where(c => c.TypeComplement == TypeComplementEnum.BOISSON).ToList(),
-            Frites = complements.Where(c => c.TypeComplement == TypeComplementEnum.FRITES).ToList()
+            Boissons = boissons,
+            Frites = frites,
+            FiltreActif = filtre ?? "all"
         };
 
         return View(viewModel);

@@ -22,18 +22,15 @@ public class CommandeService : ICommandeService
         string? adresseLivraison,
         MethodePaiementEnum methodePaiement)
     {
-        // Récupérer le panier
         var panier = _panierService.ObtenirPanier();
         if (!panier.Any())
         {
             throw new InvalidOperationException("Le panier est vide");
         }
 
-        // Calculer le montant total
         var sousTotal = _panierService.ObtenirTotal();
         decimal fraisLivraison = 0;
 
-        // Si livraison, récupérer les frais de la zone
         if (typeLivraison == TypeLivraisonEnum.A_LIVRER)
         {
             if (!idZone.HasValue)
@@ -52,7 +49,6 @@ public class CommandeService : ICommandeService
 
         var montantTotal = sousTotal + fraisLivraison;
 
-        // Créer la commande
         var commande = new Commande
         {
             IdClient = idClient,
@@ -66,12 +62,8 @@ public class CommandeService : ICommandeService
 
         _context.Commandes.Add(commande);
 
-        // Ne pas sauvegarder encore - on attend d'avoir ajouté tous les détails
-
-        // Créer les détails de commande
         foreach (var item in panier)
         {
-            // Convertir le type du panier en TypeArticleEnum
             TypeArticleEnum typeArticle = item.Type.ToLower() switch
             {
                 "burger" => TypeArticleEnum.BURGER,
@@ -82,7 +74,7 @@ public class CommandeService : ICommandeService
 
             var detail = new DetailCommande
             {
-                Commande = commande, // Relation directe au lieu de IdCommande
+                Commande = commande,
                 TypeArticle = typeArticle,
                 IdArticle = item.Id,
                 Quantite = item.Quantite,
@@ -93,10 +85,9 @@ public class CommandeService : ICommandeService
             _context.DetailCommandes.Add(detail);
         }
 
-        // Créer le paiement
         var paiement = new Paiement
         {
-            Commande = commande, // Relation directe au lieu de IdCommande
+            Commande = commande,
             DatePaiement = DateTime.UtcNow,
             Montant = montantTotal,
             MethodePaiement = methodePaiement,
@@ -106,10 +97,8 @@ public class CommandeService : ICommandeService
 
         _context.Paiements.Add(paiement);
 
-        // Sauvegarder tout en une seule transaction
         await _context.SaveChangesAsync();
 
-        // Vider le panier après la création de la commande
         _panierService.ViderPanier();
 
         return commande.Id;

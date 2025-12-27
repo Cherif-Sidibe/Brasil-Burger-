@@ -1,14 +1,24 @@
 doctrine:
     dbal:
-        url: '%env(resolve:DATABASE_URL)%'
+        url: "%env(resolve:DATABASE_URL)%"
 
         # IMPORTANT: You MUST configure your server version,
         # either here or in the DATABASE_URL env var (see .env file)
         #server_version: '16'
 
-        profiling_collect_backtrace: '%kernel.debug%'
+        profiling_collect_backtrace: "%kernel.debug%"
+
+        types:
+            role_enum: App\Doctrine\Type\RoleEnumType
+            type_complement_enum: App\Doctrine\Type\TypeComplementEnumType
+            etat_commande_enum: App\Doctrine\Type\EtatCommandeEnumType
+            type_livraison_enum: App\Doctrine\Type\TypeLivraisonEnumType
+            type_article_enum: App\Doctrine\Type\TypeArticleEnumType
+            methode_paiement_enum: App\Doctrine\Type\MethodePaiementEnumType
+            statut_paiement_enum: App\Doctrine\Type\StatutPaiementEnumType
+            text_array: App\Doctrine\Type\TextArrayType
     orm:
-        validate_xml_mapping: true
+        validate_xml_mapping: false
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         identity_generation_preferences:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
@@ -17,7 +27,7 @@ doctrine:
             App:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Entity'
+                dir: "%kernel.project_dir%/src/Entity"
                 prefix: 'App\Entity'
                 alias: App
         controller_resolver:
@@ -27,7 +37,7 @@ when@test:
     doctrine:
         dbal:
             # "TEST_TOKEN" is typically set by ParaTest
-            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+            dbname_suffix: "_test%env(default::TEST_TOKEN)%"
 
 when@prod:
     doctrine:

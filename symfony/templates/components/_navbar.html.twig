@@ -1,0 +1,35 @@
+<nav class="navbar navbar-expand-lg navbar-dark">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="{{ path('gestionnaire_dashboard') }}">Brasil
+			<span>BURGER</span>
+		</a>
+		<ul class="navbar-nav ms-auto">
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
+					<i class="bi bi-person-circle"></i>
+					{{ app.user.prenom }}
+					{{ app.user.nom }}
+				</a>
+				<ul class="dropdown-menu dropdown-menu-end">
+					<li>
+						<a class="dropdown-item" href="#">
+							<i class="bi bi-person"></i>
+							Profil</a>
+					</li>
+					<li>
+						<a class="dropdown-item" href="#">
+							<i class="bi bi-gear"></i>
+							Paramètres</a>
+					</li>
+					<li><hr class="dropdown-divider"/></li>
+					<li>
+						<a class="dropdown-item text-danger" href="{{ path('app_logout') }}">
+							<i class="bi bi-box-arrow-right"></i>
+							Déconnexion
+						</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</nav>

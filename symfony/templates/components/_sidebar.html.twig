@@ -1,0 +1,46 @@
+<nav class="col-md-3 col-lg-2 sidebar p-3">
+	<ul class="nav flex-column">
+		<li>
+			<a class="nav-link {% if app.request.attributes.get('_route') == 'gestionnaire_dashboard' %}active{% endif %}" href="{{ path('gestionnaire_dashboard') }}">
+				<i class="fa-solid fa-gauge-high"></i>
+				Dashboard
+			</a>
+		</li>
+		<li>
+			<a class="nav-link" href="#">
+				<i class="fa-solid fa-hamburger"></i>
+				Burgers
+			</a>
+		</li>
+		<li>
+			<a class="nav-link" href="#">
+				<i class="fa-solid fa-list-ul"></i>
+				Menus
+			</a>
+		</li>
+		<li>
+			<a class="nav-link" href="#">
+				<i class="fa-solid fa-mug-saucer"></i>
+				Compléments
+			</a>
+		</li>
+		<li>
+			<a class="nav-link" href="#">
+				<i class="fa-solid fa-receipt"></i>
+				Commandes
+			</a>
+		</li>
+		<li>
+			<a class="nav-link" href="#">
+				<i class="fa-solid fa-truck"></i>
+				Livreurs
+			</a>
+		</li>
+		<li>
+			<a class="nav-link" href="#">
+				<i class="fa-solid fa-users"></i>
+				Clients
+			</a>
+		</li>
+	</ul>
+</nav>

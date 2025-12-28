@@ -22,15 +22,21 @@ WORKDIR /var/www/html
 # Copier les fichiers du projet
 COPY . /var/www/html
 
-# Installer les dépendances
-RUN composer install --no-dev --optimize-autoloader
+# Définir APP_ENV pour éviter le chargement des bundles de dev
+ENV APP_ENV=prod
 
-# Configurer les permissions
-RUN chown -R www-data:www-data /var/www/html/var
+# Installer d'abord AVEC les dépendances dev pour les scripts auto
+RUN composer install --optimize-autoloader
 
 # Nettoyer le cache et compiler les assets
 RUN php bin/console cache:clear --env=prod --no-debug \
     && php bin/console asset-map:compile
+
+# Maintenant supprimer les dépendances dev pour alléger l'image
+RUN composer install --no-dev --optimize-autoloader --classmap-authoritative
+
+# Configurer les permissions
+RUN chown -R www-data:www-data /var/www/html/var
 
 # Exposer le port 80
 EXPOSE 80

@@ -1,5 +1,5 @@
-# Utiliser PHP 8.3 avec Apache
-FROM php:8.3-apache
+# Utiliser PHP 8.4 avec Apache
+FROM php:8.4-apache
 
 # Installer les extensions PHP nécessaires
 RUN apt-get update && apt-get install -y \

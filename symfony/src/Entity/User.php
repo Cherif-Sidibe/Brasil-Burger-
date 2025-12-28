@@ -3,10 +3,12 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity]
 #[ORM\Table(name: '"user"')]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const ROLE_GESTIONNAIRE = 'GESTIONNAIRE';
     public const ROLE_CLIENT = 'CLIENT';
@@ -167,4 +169,26 @@ class User
         $this->updatedAt = $updatedAt;
         return $this;
     }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
+    }
+
+    public function getRoles(): array
+    {
+        $roles = ['ROLE_USER'];
+
+        if ($this->role === self::ROLE_GESTIONNAIRE) {
+            $roles[] = 'ROLE_GESTIONNAIRE';
+        } elseif ($this->role === self::ROLE_LIVREUR) {
+            $roles[] = 'ROLE_LIVREUR';
+        } elseif ($this->role === self::ROLE_CLIENT) {
+            $roles[] = 'ROLE_CLIENT';
+        }
+
+        return array_unique($roles);
+    }
+
+    public function eraseCredentials(): void {}
 }

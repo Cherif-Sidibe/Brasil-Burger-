@@ -15,7 +15,7 @@
 				<i class="fa-solid fa-receipt stat-icon text-warning"></i>
 				<div>
 					<div class="stat-label">Commandes du jour</div>
-					<div class="stat-value text-warning">66</div>
+					<div class="stat-value text-warning">{{ statistiques.commandesDuJour }}</div>
 				</div>
 			</div>
 		</div>
@@ -24,7 +24,7 @@
 				<i class="fa-solid fa-circle-check stat-icon text-success"></i>
 				<div>
 					<div class="stat-label">Commandes validées</div>
-					<div class="stat-value text-success">22</div>
+					<div class="stat-value text-success">{{ statistiques.commandesValidees }}</div>
 				</div>
 			</div>
 		</div>
@@ -33,7 +33,7 @@
 				<i class="fa-solid fa-sack-dollar stat-icon text-info"></i>
 				<div>
 					<div class="stat-label">Recettes du jour</div>
-					<div class="stat-value text-info">520 000</div>
+					<div class="stat-value text-info">{{ statistiques.recettesDuJour|number_format(0, ',', ' ') }}</div>
 				</div>
 			</div>
 		</div>
@@ -42,7 +42,7 @@
 				<i class="fa-solid fa-circle-xmark stat-icon text-danger"></i>
 				<div>
 					<div class="stat-label">Commandes annulées</div>
-					<div class="stat-value text-danger">66</div>
+					<div class="stat-value text-danger">{{ statistiques.commandesAnnulees }}</div>
 				</div>
 			</div>
 		</div>
@@ -63,48 +63,45 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td class="align-middle-custom">
-									<img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=100" class="product-image me-2 align-middle"/>
-									<i class="fa-solid fa-hamburger text-warning me-1" style="font-size: 1.3em; vertical-align: middle"></i>
-									Brasil Classic
-								</td>
-								<td class="align-middle-custom">
-									<span class="badge bg-warning">
-										<i class="fa-solid fa-hamburger me-1"></i>Burger
-									</span>
-								</td>
-								<td class="text-center align-middle-custom">45</td>
-								<td class="text-end text-warning align-middle-custom">157 500 FCFA</td>
-							</tr>
-							<tr>
-								<td class="align-middle-custom">
-									<img src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=100" class="product-image me-2 align-middle"/>
-									<i class="fa-solid fa-list-ul text-warning me-1"></i>
-									Menu Cheese
-								</td>
-								<td class="align-middle-custom">
-									<span class="badge bg-info">
-										<i class="fa-solid fa-list-ul me-1"></i>Menu
-									</span>
-								</td>
-								<td class="text-center align-middle-custom">38</td>
-								<td class="text-end text-warning align-middle-custom">220 400 FCFA</td>
-							</tr>
-							<tr>
-								<td class="align-middle-custom">
-									<img src="https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=100" class="product-image me-2 align-middle"/>
-									<i class="fa-solid fa-hamburger text-warning me-1" style="font-size: 1.3em; vertical-align: middle"></i>
-									BBQ Special
-								</td>
-								<td class="align-middle-custom">
-									<span class="badge bg-warning">
-										<i class="fa-solid fa-hamburger me-1"></i>Burger
-									</span>
-								</td>
-								<td class="text-center align-middle-custom">32</td>
-								<td class="text-end text-warning align-middle-custom">144 000 FCFA</td>
-							</tr>
+							{% for produit in produitsVendus %}
+								<tr>
+									<td class="align-middle-custom">
+										{% if produit.image_produit %}
+											<img src="{{ produit.image_produit }}" class="product-image me-2 align-middle" onerror="this.style.display='none'"/>
+										{% endif %}
+										{% if produit.type_article == 'BURGER' %}
+											<i class="fa-solid fa-hamburger text-warning me-1" style="font-size: 1.3em; vertical-align: middle"></i>
+										{% elseif produit.type_article == 'MENU' %}
+											<i class="fa-solid fa-list-ul text-warning me-1"></i>
+										{% else %}
+											<i class="fa-solid fa-mug-saucer text-warning me-1"></i>
+										{% endif %}
+										{{ produit.nom_produit|default('Produit #' ~ produit.id_article) }}
+									</td>
+									<td class="align-middle-custom">
+										{% if produit.type_article == 'BURGER' %}
+											<span class="badge bg-warning">
+												<i class="fa-solid fa-hamburger me-1"></i>Burger
+											</span>
+										{% elseif produit.type_article == 'MENU' %}
+											<span class="badge bg-info">
+												<i class="fa-solid fa-list-ul me-1"></i>Menu
+											</span>
+										{% else %}
+											<span class="badge bg-secondary">
+												<i class="fa-solid fa-mug-saucer me-1"></i>Complément
+											</span>
+										{% endif %}
+									</td>
+									<td class="text-center align-middle-custom">{{ produit.total_quantite }}</td>
+									<td class="text-end text-warning align-middle-custom">{{ produit.chiffre_affaires|number_format(0, ',', ' ') }}
+										FCFA</td>
+								</tr>
+							{% else %}
+								<tr>
+									<td colspan="4" class="text-center text-muted">Aucun produit vendu aujourd'hui</td>
+								</tr>
+							{% endfor %}
 						</tbody>
 					</table>
 				</div>
@@ -115,22 +112,31 @@
 			<div class="card">
 				<div class="card-header">Commandes récentes</div>
 				<div class="card-body">
-					<div class="commande-card commande-info">
-						<div class="d-flex justify-content-between">
-							<strong>#CMD00015</strong>
-							<span class="badge bg-info commande-badge">En préparation</span>
+					{% for commande in commandesRecentes %}
+						<div class="commande-card {% if commande.etatCommande == 'EN_PREPARATION' %}commande-info{% elseif commande.etatCommande in ['LIVREE', 'RETIREE', 'CONSOMMEE_SUR_PLACE'] %}commande-success{% elseif commande.etatCommande == 'ANNULEE' %}commande-danger{% else %}commande-warning{% endif %}">
+							<div class="d-flex justify-content-between">
+								<strong>#CMD{{ '%05d'|format(commande.id) }}</strong>
+								<span class="badge {% if commande.etatCommande == 'EN_PREPARATION' %}bg-info{% elseif commande.etatCommande in ['LIVREE', 'RETIREE', 'CONSOMMEE_SUR_PLACE'] %}bg-success{% elseif commande.etatCommande == 'ANNULEE' %}bg-danger{% else %}bg-warning{% endif %} commande-badge">
+									{% if commande.etatCommande == 'EN_ATTENTE' %}En attente
+										{% elseif commande.etatCommande == 'CONFIRMEE' %}Confirmée
+										{% elseif commande.etatCommande == 'EN_PREPARATION' %}En préparation
+										{% elseif commande.etatCommande == 'PRETE' %}Prête
+										{% elseif commande.etatCommande == 'LIVREE' %}Livrée
+										{% elseif commande.etatCommande == 'RETIREE' %}Retirée
+										{% elseif commande.etatCommande == 'CONSOMMEE_SUR_PLACE' %}Sur place
+										{% elseif commande.etatCommande == 'ANNULEE' %}Annulée
+									{% endif %}
+								</span>
+							</div>
+							<small>Client :
+								{{ commande.client.prenom }}
+								{{ commande.client.nom }}</small>
+							<div class="text-warning fw-bold">{{ commande.montantTotal|number_format(0, ',', ' ') }}
+								FCFA</div>
 						</div>
-						<small>Client : Diallo Amadou</small>
-						<div class="text-warning fw-bold">5 800 FCFA</div>
-					</div>
-					<div class="commande-card commande-success">
-						<div class="d-flex justify-content-between">
-							<strong>#CMD00014</strong>
-							<span class="badge bg-success commande-badge">Terminée</span>
-						</div>
-						<small>Client : Ndiaye Fatou</small>
-						<div class="text-warning fw-bold">6 200 FCFA</div>
-					</div>
+					{% else %}
+						<p class="text-center text-muted">Aucune commande récente</p>
+					{% endfor %}
 				</div>
 			</div>
 		</div>

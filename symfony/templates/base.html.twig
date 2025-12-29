@@ -31,6 +31,11 @@
 		.navbar {
 			background: #000;
 			border-bottom: 3px solid var(--brasil-yellow);
+			z-index: 1030;
+		}
+
+		body {
+			padding-top: 56px;
 		}
 
 		.navbar-brand span {
@@ -42,6 +47,22 @@
 			background: linear-gradient(180deg, #0b0b0b, #000);
 			border-right: 4px solid var(--brasil-yellow);
 			min-height: 100vh;
+			position: fixed;
+			top: 56px;
+			left: 0;
+			bottom: 0;
+			overflow-y: auto;
+			z-index: 1020;
+		}
+
+		.content-wrapper {
+			margin-left: 16.666667%;
+		}
+
+		@media(min-width: 992px) {
+			.content-wrapper {
+				margin-left: 16.666667%;
+			}
 		}
 
 		.sidebar .nav-link {
@@ -202,7 +223,7 @@
 		<div class="row">
 			{% include 'components/_sidebar.html.twig' %}
 
-			<main class="col-md-9 col-lg-10 px-4 py-4"> {% block body %}{% endblock %}
+			<main class="col-md-9 col-lg-10 px-4 py-4 content-wrapper"> {% block body %}{% endblock %}
 				</main>
 			</div>
 		</div>

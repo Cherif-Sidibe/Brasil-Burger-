@@ -213,6 +213,39 @@
 			background: var(--brasil-cyan) !important;
 		}
 
+		.pagination {
+			gap: 8px;
+		}
+
+		.pagination .page-link {
+			background: var(--brasil-card);
+			border: 2px solid var(--brasil-yellow);
+			color: #fff;
+			padding: 10px 18px;
+			border-radius: 10px;
+			font-weight: 600;
+			transition: all 0.3s ease;
+		}
+
+		.pagination .page-link:hover {
+			background: var(--brasil-yellow);
+			color: #000;
+			transform: translateY(-2px);
+		}
+
+		.pagination .page-item.active .page-link {
+			background: var(--brasil-yellow);
+			color: #000;
+			border-color: var(--brasil-yellow);
+		}
+
+		.pagination .page-item.disabled .page-link {
+			background: #1a1a1a;
+			border-color: #333;
+			color: #666;
+			cursor: not-allowed;
+		}
+
 		{% block styles %}{% endblock %}
 	</style>
 </head>

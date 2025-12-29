@@ -7,7 +7,7 @@
 			</a>
 		</li>
 		<li>
-			<a class="nav-link" href="#">
+			<a class="nav-link {% if app.request.attributes.get('_route') starts with 'gestionnaire_burgers' %}active{% endif %}" href="{{ path('gestionnaire_burgers_liste') }}">
 				<i class="fa-solid fa-hamburger"></i>
 				Burgers
 			</a>

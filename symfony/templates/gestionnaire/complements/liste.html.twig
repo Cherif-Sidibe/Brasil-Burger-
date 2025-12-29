@@ -1,23 +1,31 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Gestion des Menus - Brasil Burger
+{% block title %}Gestion des Compléments - Brasil Burger
 {% endblock %}
 
 {% block body %}
 	<div class="d-flex justify-content-between align-items-center mb-4">
 		<h1 class="h2">
-			<i class="fa-solid fa-utensils text-warning"></i>
-			Gestion des Menus
+			<i class="fa-solid fa-mug-saucer text-warning"></i>
+			Gestion des Compléments
 		</h1>
 	</div>
 
 	<!-- Formulaire de filtres -->
 	<div class="card mb-4">
 		<div class="card-body">
-			<form method="get" action="{{ path('gestionnaire_menus_liste') }}" class="row g-3">
+			<form method="get" action="{{ path('gestionnaire_complements_liste') }}" class="row g-3">
 				<div class="col-md-3">
 					<label class="form-label">Recherche</label>
 					<input type="text" name="recherche" class="form-control" placeholder="Nom ou description..." value="{{ filters.recherche }}">
+				</div>
+				<div class="col-md-2">
+					<label class="form-label">Type</label>
+					<select name="type" class="form-select">
+						<option value="">Tous</option>
+						<option value="FRITES" {% if filters.type == 'FRITES' %} selected {% endif %}>Frites</option>
+						<option value="BOISSON" {% if filters.type == 'BOISSON' %} selected {% endif %}>Boissons</option>
+					</select>
 				</div>
 				<div class="col-md-2">
 					<label class="form-label">Statut</label>
@@ -27,7 +35,7 @@
 						<option value="archive" {% if filters.statut == 'archive' %} selected {% endif %}>Archivés</option>
 					</select>
 				</div>
-				<div class="col-md-3">
+				<div class="col-md-2">
 					<label class="form-label">Trier par</label>
 					<select name="tri" class="form-select">
 						<option value="">Nom (A-Z)</option>
@@ -52,7 +60,7 @@
 		</div>
 	{% endfor %}
 
-	<!-- Liste des menus -->
+	<!-- Liste des compléments -->
 	<div class="card">
 		<div class="card-body">
 			<div class="table-responsive">
@@ -61,7 +69,8 @@
 						<tr>
 							<th>Image</th>
 							<th>Nom</th>
-							<th>Composition</th>
+							<th>Type</th>
+							<th>Description</th>
 							<th>Prix</th>
 							<th class="text-center">Ventes</th>
 							<th>Statut</th>
@@ -69,60 +78,62 @@
 						</tr>
 					</thead>
 					<tbody>
-						{% for menu in menus %}
+						{% for complement in complements %}
 							<tr>
 								<td>
-									{% if menu.image %}
-										<img src="{{ menu.image }}" class="product-image" alt="{{ menu.nom }}" onerror="this.style.display='none'"/>
+									{% if complement.image %}
+										<img src="{{ complement.image }}" class="product-image" alt="{{ complement.nom }}" onerror="this.style.display='none'"/>
 									{% else %}
 										<div class="product-image d-flex align-items-center justify-content-center bg-secondary">
-											<i class="fa-solid fa-utensils text-warning"></i>
+											{% if complement.typeComplement == 'FRITES' %}
+												<i class="fa-solid fa-fries text-danger"></i>
+											{% else %}
+												<i class="fa-solid fa-wine-bottle text-info"></i>
+											{% endif %}
 										</div>
 									{% endif %}
 								</td>
 								<td>
-									<strong>{{ menu.nom }}</strong>
+									<strong>{{ complement.nom }}</strong>
 								</td>
 								<td>
-									<div class="small">
-										<div>
-											<i class="fa-solid fa-hamburger text-warning"></i>
-											{{ menu.burger.nom }}
-										</div>
-										<div>
-											<i class="fa-solid fa-wine-bottle text-info"></i>
-											{{ menu.boisson.nom }}
-										</div>
-										<div>
-											<i class="fa-solid fa-fries text-danger"></i>
-											{{ menu.frite.nom }}
-										</div>
-									</div>
+									{% if complement.typeComplement == 'FRITES' %}
+										<span class="badge bg-danger">
+											<i class="fa-solid fa-fries"></i>
+											Frites
+										</span>
+									{% else %}
+										<span class="badge bg-info">
+											<i class="fa-solid fa-wine-bottle"></i>
+											Boisson
+										</span>
+									{% endif %}
 								</td>
+								<td>{{ complement.description|default('—')|u.truncate(50, '...') }}</td>
 								<td>
-									<span class="text-warning fw-bold">{{ menu.prix|number_format(0, ',', ' ') }}
+									<span class="text-warning fw-bold">{{ complement.prix|number_format(0, ',', ' ') }}
 										FCFA</span>
 								</td>
 								<td class="text-center">
-									<span class="badge bg-secondary">{{ menu.total_ventes }}</span>
+									<span class="badge bg-secondary">{{ complement.total_ventes }}</span>
 								</td>
 								<td>
-									{% if menu.isArchive %}
+									{% if complement.isArchive %}
 										<span class="badge bg-secondary">Archivé</span>
 									{% else %}
 										<span class="badge bg-success">Actif</span>
 									{% endif %}
 								</td>
 								<td class="text-end">
-									<a href="{{ path('gestionnaire_menus_details') }}?id={{ menu.id }}" class="btn btn-sm btn-outline-info" title="Voir">
+									<a href="{{ path('gestionnaire_complements_details') }}?id={{ complement.id }}" class="btn btn-sm btn-outline-info" title="Voir">
 										<i class="fa-solid fa-eye"></i>
 									</a>
-									{% if menu.isArchive %}
-										<button type="button" class="btn btn-sm btn-outline-success" title="Restaurer" onclick="showConfirmModal('Restaurer ce menu', 'Voulez-vous vraiment restaurer « {{ menu.nom }} » ?', '{{ path('gestionnaire_menus_restaurer') }}?id={{ menu.id }}')">
+									{% if complement.isArchive %}
+										<button type="button" class="btn btn-sm btn-outline-success" title="Restaurer" onclick="showConfirmModal('Restaurer ce complément', 'Voulez-vous vraiment restaurer « {{ complement.nom }} » ?', '{{ path('gestionnaire_complements_restaurer') }}?id={{ complement.id }}')">
 											<i class="fa-solid fa-rotate-left"></i>
 										</button>
 									{% else %}
-										<button type="button" class="btn btn-sm btn-outline-danger" title="Archiver" onclick="showConfirmModal('Archiver ce menu', 'Voulez-vous vraiment archiver « {{ menu.nom }} » ?', '{{ path('gestionnaire_menus_archiver') }}?id={{ menu.id }}')">
+										<button type="button" class="btn btn-sm btn-outline-danger" title="Archiver" onclick="showConfirmModal('Archiver ce complément', 'Voulez-vous vraiment archiver « {{ complement.nom }} » ?', '{{ path('gestionnaire_complements_archiver') }}?id={{ complement.id }}')">
 											<i class="fa-solid fa-archive"></i>
 										</button>
 									{% endif %}
@@ -130,8 +141,8 @@
 							</tr>
 						{% else %}
 							<tr>
-								<td colspan="7" class="text-center text-muted py-4">
-									Aucun menu trouvé
+								<td colspan="8" class="text-center text-muted py-4">
+									Aucun complément trouvé
 								</td>
 							</tr>
 						{% endfor %}
@@ -145,7 +156,7 @@
 	<nav class="mt-4">
 		<ul class="pagination justify-content-center">
 			<li class="page-item {% if currentPage == 1 %}disabled{% endif %}">
-				<a class="page-link" href="{{ path('gestionnaire_menus_liste', filters|merge({page: currentPage - 1})) }}">
+				<a class="page-link" href="{{ path('gestionnaire_complements_liste', filters|merge({page: currentPage - 1})) }}">
 					<i class="fa-solid fa-chevron-left"></i>
 					Précédent
 				</a>
@@ -153,12 +164,12 @@
 
 			{% for page in 1..totalPages %}
 				<li class="page-item {% if page == currentPage %}active{% endif %}">
-					<a class="page-link" href="{{ path('gestionnaire_menus_liste', filters|merge({page: page})) }}">{{ page }}</a>
+					<a class="page-link" href="{{ path('gestionnaire_complements_liste', filters|merge({page: page})) }}">{{ page }}</a>
 				</li>
 			{% endfor %}
 
 			<li class="page-item {% if currentPage == totalPages %}disabled{% endif %}">
-				<a class="page-link" href="{{ path('gestionnaire_menus_liste', filters|merge({page: currentPage + 1})) }}">
+				<a class="page-link" href="{{ path('gestionnaire_complements_liste', filters|merge({page: currentPage + 1})) }}">
 					Suivant
 					<i class="fa-solid fa-chevron-right"></i>
 				</a>
@@ -169,7 +180,7 @@
 	<div class="text-muted text-center mt-2">
 		Total :
 		{{ totalItems }}
-		menu(s)
+		complément(s)
 	</div>
 
 	<!-- Modal de confirmation personnalisé -->

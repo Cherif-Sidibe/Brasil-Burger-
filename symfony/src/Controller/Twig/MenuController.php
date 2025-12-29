@@ -28,7 +28,7 @@ class MenuController extends AbstractController implements MenuControllerInterfa
         ];
 
         $page = max(1, (int) $request->query->get('page', 1));
-        $limit = 10;
+        $limit = 4;
 
         $result = $this->menuService->listerMenus($filters, $page, $limit);
 

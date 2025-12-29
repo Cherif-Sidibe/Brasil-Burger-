@@ -19,7 +19,7 @@
 			</a>
 		</li>
 		<li>
-			<a class="nav-link" href="#">
+			<a class="nav-link {% if app.request.attributes.get('_route') starts with 'gestionnaire_complements' %}active{% endif %}" href="{{ path('gestionnaire_complements_liste') }}">
 				<i class="fa-solid fa-mug-saucer"></i>
 				Compléments
 			</a>

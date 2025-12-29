@@ -28,7 +28,7 @@ class BurgerController extends AbstractController implements BurgerControllerInt
         ];
 
         $page = max(1, (int) $request->query->get('page', 1));
-        $limit = 10;
+        $limit = 4;
 
         $result = $this->burgerService->listerBurgers($filters, $page, $limit);
 

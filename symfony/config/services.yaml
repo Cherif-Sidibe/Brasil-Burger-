@@ -34,3 +34,6 @@ services:
 
     App\Service\MenuServiceInterface:
         class: App\Service\Impl\MenuServiceImpl
+
+    App\Service\ComplementServiceInterface:
+        class: App\Service\Impl\ComplementServiceImpl

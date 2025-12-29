@@ -28,6 +28,9 @@ services:
 
     App\Service\StatistiqueServiceInterface:
         class: App\Service\Impl\StatistiqueServiceImpl
-        
+
     App\Service\BurgerServiceInterface:
         class: App\Service\Impl\BurgerServiceImpl
+
+    App\Service\MenuServiceInterface:
+        class: App\Service\Impl\MenuServiceImpl

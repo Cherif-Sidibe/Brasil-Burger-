@@ -13,8 +13,8 @@
 			</a>
 		</li>
 		<li>
-			<a class="nav-link" href="#">
-				<i class="fa-solid fa-list-ul"></i>
+			<a class="nav-link {% if app.request.attributes.get('_route') starts with 'gestionnaire_menus' %}active{% endif %}" href="{{ path('gestionnaire_menus_liste') }}">
+				<i class="fa-solid fa-utensils"></i>
 				Menus
 			</a>
 		</li>

@@ -1,0 +1,215 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Gestion des Menus - Brasil Burger
+{% endblock %}
+
+{% block body %}
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h1 class="h2">
+			<i class="fa-solid fa-utensils text-warning"></i>
+			Gestion des Menus
+		</h1>
+	</div>
+
+	<!-- Formulaire de filtres -->
+	<div class="card mb-4">
+		<div class="card-body">
+			<form method="get" action="{{ path('gestionnaire_menus_liste') }}" class="row g-3">
+				<div class="col-md-3">
+					<label class="form-label">Recherche</label>
+					<input type="text" name="recherche" class="form-control" placeholder="Nom ou description..." value="{{ filters.recherche }}">
+				</div>
+				<div class="col-md-3">
+					<label class="form-label">Statut</label>
+					<select name="statut" class="form-select">
+						<option value="">Tous</option>
+						<option value="actif" {% if filters.statut == 'actif' %} selected {% endif %}>Actifs</option>
+						<option value="archive" {% if filters.statut == 'archive' %} selected {% endif %}>Archivés</option>
+					</select>
+				</div>
+				<div class="col-md-3">
+					<label class="form-label">Trier par</label>
+					<select name="tri" class="form-select">
+						<option value="">Nom (A-Z)</option>
+						<option value="ventes" {% if filters.tri == 'ventes' %} selected {% endif %}>Nombre de ventes</option>
+					</select>
+				</div>
+				<div class="col-md-3 d-flex align-items-end">
+					<button type="submit" class="btn btn-warning w-100">
+						<i class="fa-solid fa-filter"></i>
+						Filtrer
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Messages flash -->
+	{% for message in app.flashes('success') %}
+		<div class="alert alert-success alert-dismissible fade show" role="alert">
+			{{ message }}
+			<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+		</div>
+	{% endfor %}
+
+	<!-- Liste des menus -->
+	<div class="card">
+		<div class="card-body">
+			<div class="table-responsive">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Image</th>
+							<th>Nom</th>
+							<th>Composition</th>
+							<th>Prix</th>
+							<th class="text-center">Ventes</th>
+							<th>Statut</th>
+							<th class="text-end">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for menu in menus %}
+							<tr>
+								<td>
+									{% if menu.image %}
+										<img src="{{ menu.image }}" class="product-image" alt="{{ menu.nom }}" onerror="this.style.display='none'"/>
+									{% else %}
+										<div class="product-image d-flex align-items-center justify-content-center bg-secondary">
+											<i class="fa-solid fa-utensils text-warning"></i>
+										</div>
+									{% endif %}
+								</td>
+								<td>
+									<strong>{{ menu.nom }}</strong>
+								</td>
+								<td>
+									<div class="small">
+										<div>
+											<i class="fa-solid fa-hamburger text-warning"></i>
+											{{ menu.burger.nom }}
+										</div>
+										<div>
+											<i class="fa-solid fa-wine-bottle text-info"></i>
+											{{ menu.boisson.nom }}
+										</div>
+										<div>
+											<i class="fa-solid fa-fries text-danger"></i>
+											{{ menu.frite.nom }}
+										</div>
+									</div>
+								</td>
+								<td>
+									<span class="text-warning fw-bold">{{ menu.prix|number_format(0, ',', ' ') }}
+										FCFA</span>
+								</td>
+								<td class="text-center">
+									<span class="badge bg-secondary">{{ menu.total_ventes }}</span>
+								</td>
+								<td>
+									{% if menu.isArchive %}
+										<span class="badge bg-secondary">Archivé</span>
+									{% else %}
+										<span class="badge bg-success">Actif</span>
+									{% endif %}
+								</td>
+								<td class="text-end">
+									<a href="{{ path('gestionnaire_menus_details') }}?id={{ menu.id }}" class="btn btn-sm btn-outline-info" title="Voir">
+										<i class="fa-solid fa-eye"></i>
+									</a>
+									{% if menu.isArchive %}
+										<button type="button" class="btn btn-sm btn-outline-success" title="Restaurer" onclick="showConfirmModal('Restaurer ce menu', 'Voulez-vous vraiment restaurer « {{ menu.nom }} » ?', '{{ path('gestionnaire_menus_restaurer') }}?id={{ menu.id }}')">
+											<i class="fa-solid fa-rotate-left"></i>
+										</button>
+									{% else %}
+										<button type="button" class="btn btn-sm btn-outline-danger" title="Archiver" onclick="showConfirmModal('Archiver ce menu', 'Voulez-vous vraiment archiver « {{ menu.nom }} » ?', '{{ path('gestionnaire_menus_archiver') }}?id={{ menu.id }}')">
+											<i class="fa-solid fa-archive"></i>
+										</button>
+									{% endif %}
+								</td>
+							</tr>
+						{% else %}
+							<tr>
+								<td colspan="7" class="text-center text-muted py-4">
+									Aucun menu trouvé
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<!-- Pagination -->
+	<nav class="mt-4">
+		<ul class="pagination justify-content-center">
+			<li class="page-item {% if currentPage == 1 %}disabled{% endif %}">
+				<a class="page-link" href="{{ path('gestionnaire_menus_liste', filters|merge({page: currentPage - 1})) }}">
+					<i class="fa-solid fa-chevron-left"></i>
+					Précédent
+				</a>
+			</li>
+
+			{% for page in 1..totalPages %}
+				<li class="page-item {% if page == currentPage %}active{% endif %}">
+					<a class="page-link" href="{{ path('gestionnaire_menus_liste', filters|merge({page: page})) }}">{{ page }}</a>
+				</li>
+			{% endfor %}
+
+			<li class="page-item {% if currentPage == totalPages %}disabled{% endif %}">
+				<a class="page-link" href="{{ path('gestionnaire_menus_liste', filters|merge({page: currentPage + 1})) }}">
+					Suivant
+					<i class="fa-solid fa-chevron-right"></i>
+				</a>
+			</li>
+		</ul>
+	</nav>
+
+	<div class="text-muted text-center mt-2">
+		Total :
+		{{ totalItems }}
+		menu(s)
+	</div>
+
+	<!-- Modal de confirmation personnalisé -->
+	<div class="modal fade" id="confirmModal" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content" style="background: var(--brasil-card); border: 2px solid var(--brasil-yellow);">
+				<div class="modal-header border-bottom border-secondary">
+					<h5 class="modal-title text-warning">
+						<i class="fa-solid fa-circle-exclamation"></i>
+						<span id="confirmModalTitle"></span>
+					</h5>
+					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body text-white">
+					<p id="confirmModalMessage"></p>
+				</div>
+				<div class="modal-footer border-top border-secondary">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+						<i class="fa-solid fa-times"></i>
+						Annuler
+					</button>
+					<form method="post" id="confirmModalForm" class="d-inline">
+						<button type="submit" class="btn btn-warning">
+							<i class="fa-solid fa-check"></i>
+							Confirmer
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		function showConfirmModal(title, message, actionUrl) {
+document.getElementById('confirmModalTitle').textContent = title;
+document.getElementById('confirmModalMessage').textContent = message;
+document.getElementById('confirmModalForm').action = actionUrl;
+
+const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+modal.show();
+}
+	</script>
+{% endblock %}

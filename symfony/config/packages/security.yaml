@@ -30,9 +30,9 @@ security:
                 path: /
 
     access_control:
+        - { path: ^/$, roles: PUBLIC_ACCESS }
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/gestionnaire, roles: ROLE_GESTIONNAIRE }
-        - { path: ^/, roles: ROLE_GESTIONNAIRE }
 
     role_hierarchy:
         ROLE_GESTIONNAIRE: [ROLE_USER]

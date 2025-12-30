@@ -25,7 +25,7 @@
 			</a>
 		</li>
 		<li>
-			<a class="nav-link" href="#">
+			<a class="nav-link {% if app.request.attributes.get('_route') starts with 'gestionnaire_commandes' %}active{% endif %}" href="{{ path('gestionnaire_commandes_liste') }}">
 				<i class="fa-solid fa-receipt"></i>
 				Commandes
 			</a>

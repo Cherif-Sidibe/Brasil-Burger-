@@ -31,6 +31,12 @@
 			</a>
 		</li>
 		<li>
+			<a class="nav-link {% if app.request.attributes.get('_route') starts with 'gestionnaire_zones' %}active{% endif %}" href="{{ path('gestionnaire_zones_liste') }}">
+				<i class="fa-solid fa-map-marker-alt"></i>
+				Zones livraison
+			</a>
+		</li>
+		<li>
 			<a class="nav-link {% if app.request.attributes.get('_route') starts with 'gestionnaire_livreurs' %}active{% endif %}" href="{{ path('gestionnaire_livreurs_liste') }}">
 				<i class="fa-solid fa-truck"></i>
 				Livreurs

@@ -1,0 +1,148 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Zones de Livraison
+{% endblock %}
+
+{% block body %}
+	<div
+		class="container-fluid py-4">
+		{# En-tête #}
+		<div class="d-flex justify-content-between align-items-center mb-4">
+			<h1 class="h3 mb-0 text-brasil-yellow">Zones de Livraison</h1>
+		</div>
+
+		{# Messages flash #}
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success alert-dismissible fade show">
+				<i class="fas fa-check-circle me-2"></i>
+				{{ message }}
+				<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+			</div>
+		{% endfor %}
+		{% for message in app.flashes('error') %}
+			<div class="alert alert-danger alert-dismissible fade show">
+				<i class="fas fa-exclamation-circle me-2"></i>
+				{{ message }}
+				<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+			</div>
+		{% endfor %}
+
+		{# Liste des zones en cartes #}
+		{% if zones is empty %}
+			<div class="card" style="border: 2px solid var(--brasil-yellow);">
+				<div class="card-body text-center py-5">
+					<i class="fas fa-map-marker-alt fa-3x text-muted mb-3"></i>
+					<h5 class="text-muted">Aucune zone de livraison</h5>
+				</div>
+			</div>
+		{% else %}
+			<div class="row g-4">
+				{% for zone in zones %}
+					<div class="col-lg-4 col-md-6">
+						<div class="card h-100 {{ zone.isArchive ? 'opacity-50' : '' }}" style="border: 2px solid var(--brasil-yellow); background: var(--brasil-card);">
+							<div
+								class="card-body p-4">
+								{# Header avec nom et badge #}
+								<div class="d-flex justify-content-between align-items-start mb-3">
+									<h4 class="mb-0 text-white">{{ zone.nom }}</h4>
+									{% if zone.isArchive %}
+										<span class="badge bg-danger">Archivée</span>
+									{% else %}
+										<span class="badge bg-success">Active</span>
+									{% endif %}
+								</div>
+
+								{# Prix de livraison #}
+								<div class="mb-3">
+									<span class="text-muted">Prix de livraison</span>
+									<span class="text-brasil-yellow fw-bold ms-2">{{ zone.prixLivraison|number_format(0, ',', ' ') }}
+										FCFA</span>
+								</div>
+
+								{# Quartiers couverts #}
+								<div class="mb-4">
+									<span class="text-muted d-block mb-2">Quartiers couverts</span>
+									<div>
+										{% if zone.quartiers is not empty %}
+											{% for quartier in zone.quartiers %}
+												<span class="badge bg-secondary me-1 mb-1">{{ quartier }}</span>
+											{% endfor %}
+										{% else %}
+											<span class="text-muted">Aucun quartier défini</span>
+										{% endif %}
+									</div>
+								</div>
+
+								{# Actions #}
+								<div class="d-flex gap-2">
+									{% if zone.isArchive %}
+										<form method="post" action="{{ path('gestionnaire_zones_restaurer', {id: zone.id}) }}" class="d-inline">
+											<button type="submit" class="btn btn-success btn-sm">
+												<i class="fas fa-undo me-1"></i>Restaurer
+											</button>
+										</form>
+									{% else %}
+										<button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#archiverModal{{ zone.id }}">
+											<i class="fas fa-archive me-1"></i>Archiver
+										</button>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+
+			{# Pagination #}
+			<nav class="mt-4">
+				<ul class="pagination justify-content-center">
+					<li class="page-item {{ currentPage <= 1 ? 'disabled' : '' }}">
+						<a class="page-link" href="{{ path('gestionnaire_zones_liste', {page: currentPage - 1, statut: statut}) }}">
+							<i class="fas fa-chevron-left"></i>
+						</a>
+					</li>
+					{% for i in 1..totalPages %}
+						<li class="page-item {{ currentPage == i ? 'active' : '' }}">
+							<a class="page-link" href="{{ path('gestionnaire_zones_liste', {page: i, statut: statut}) }}">{{ i }}</a>
+						</li>
+					{% endfor %}
+					<li class="page-item {{ currentPage >= totalPages ? 'disabled' : '' }}">
+						<a class="page-link" href="{{ path('gestionnaire_zones_liste', {page: currentPage + 1, statut: statut}) }}">
+							<i class="fas fa-chevron-right"></i>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		{% endif %}
+	</div>
+
+	{# Modals d'archivage #}
+	{% for zone in zones %}
+		{% if not zone.isArchive %}
+			<div class="modal fade" id="archiverModal{{ zone.id }}" tabindex="-1">
+				<div class="modal-dialog">
+					<div class="modal-content bg-dark">
+						<div class="modal-header border-secondary">
+							<h5 class="modal-title">
+								<i class="fas fa-archive me-2 text-warning"></i>Archiver cette zone ?
+							</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+						</div>
+						<div class="modal-body">
+							Êtes-vous sûr de vouloir archiver la zone
+							<strong>{{ zone.nom }}</strong>
+							?
+							<br><small class="text-muted">Cette zone ne sera plus disponible pour les livraisons.</small>
+						</div>
+						<div class="modal-footer border-secondary">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+							<form method="post" action="{{ path('gestionnaire_zones_archiver', {id: zone.id}) }}" class="d-inline">
+								<button type="submit" class="btn btn-danger">Archiver</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endif %}
+	{% endfor %}
+{% endblock %}

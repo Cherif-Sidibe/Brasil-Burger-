@@ -185,9 +185,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									{% for item in details %}
-										{% set detail = item.detail %}
-										{% set article = item.article %}
+									{% for detail in details %}
 										<tr>
 											<td>
 												{% if detail.typeArticle == 'BURGER' %}
@@ -197,7 +195,7 @@
 												{% elseif detail.typeArticle == 'COMPLEMENT' %}
 													<i class="fas fa-glass-water text-info me-2"></i>
 												{% endif %}
-												{{ article ? article.nom : 'Article supprimé' }}
+												{{ detail.articleNom ?? 'Article supprimé' }}
 											</td>
 											<td class="text-center">
 												<span class="badge bg-secondary">{{ detail.quantite }}</span>

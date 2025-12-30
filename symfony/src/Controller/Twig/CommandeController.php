@@ -3,6 +3,7 @@
 namespace App\Controller\Twig;
 
 use App\Controller\CommandeControllerInterface;
+use App\DTO\UserDTO;
 use App\Repository\UserRepository;
 use App\Service\CommandeServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -57,7 +58,8 @@ class CommandeController extends AbstractController implements CommandeControlle
         }
 
         // Récupérer les livreurs disponibles pour l'assignation
-        $livreurs = $this->userRepository->findLivreursActifs();
+        $livreursEntities = $this->userRepository->findLivreursActifs();
+        $livreurs = UserDTO::fromEntities($livreursEntities);
 
         return $this->render('gestionnaire/commandes/details.html.twig', [
             'commande' => $result['commande'],

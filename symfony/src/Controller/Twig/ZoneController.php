@@ -2,6 +2,7 @@
 
 namespace App\Controller\Twig;
 
+use App\DTO\ZoneDTO;
 use App\Entity\Zone;
 use App\Repository\ZoneRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,11 +43,13 @@ class ZoneController extends AbstractController
         $totalPages = max(1, ceil($totalItems / $limit));
 
         // Pagination
-        $zones = $qb
+        $zonesEntities = $qb
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
+
+        $zones = ZoneDTO::fromEntities($zonesEntities);
 
         return $this->render('gestionnaire/zones/liste.html.twig', [
             'zones' => $zones,

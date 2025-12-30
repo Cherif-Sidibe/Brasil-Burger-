@@ -2,6 +2,8 @@
 
 namespace App\Controller\Twig;
 
+use App\DTO\CommandeDTO;
+use App\DTO\UserDTO;
 use App\Entity\User;
 use App\Repository\CommandeRepository;
 use App\Repository\UserRepository;
@@ -52,15 +54,17 @@ class ClientController extends AbstractController
         $totalPages = max(1, ceil($totalItems / $limit));
 
         // Pagination
-        $clients = $qb
+        $clientsEntities = $qb
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
 
+        $clients = UserDTO::fromEntities($clientsEntities);
+
         // Récupérer la dernière commande pour chaque client
         $dernieresCommandes = [];
-        foreach ($clients as $client) {
+        foreach ($clientsEntities as $client) {
             $derniereCommande = $this->commandeRepository->createQueryBuilder('c')
                 ->where('c.client = :client')
                 ->setParameter('client', $client)
@@ -68,7 +72,7 @@ class ClientController extends AbstractController
                 ->setMaxResults(1)
                 ->getQuery()
                 ->getOneOrNullResult();
-            $dernieresCommandes[$client->getId()] = $derniereCommande;
+            $dernieresCommandes[$client->getId()] = $derniereCommande ? CommandeDTO::fromEntity($derniereCommande) : null;
         }
 
         return $this->render('gestionnaire/clients/liste.html.twig', [

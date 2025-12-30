@@ -2,6 +2,7 @@
 
 namespace App\Service\Impl;
 
+use App\DTO\BurgerDTO;
 use App\Repository\BurgerRepository;
 use App\Service\BurgerServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,8 +21,8 @@ class BurgerServiceImpl implements BurgerServiceInterface
         $burgers = [];
         foreach ($paginator as $result) {
             $burger = $result[0];
-            $burger->total_ventes = $result['total_ventes'];
-            $burgers[] = $burger;
+            $totalVentes = (int) $result['total_ventes'];
+            $burgers[] = BurgerDTO::fromEntity($burger, $totalVentes);
         }
 
         return [
@@ -52,10 +53,11 @@ class BurgerServiceImpl implements BurgerServiceInterface
         }
 
         $burger = $result[0];
+        $totalVentes = (int) $result['total_ventes'];
 
         return [
-            'burger' => $burger,
-            'total_ventes' => $result['total_ventes']
+            'burger' => BurgerDTO::fromEntity($burger, $totalVentes),
+            'total_ventes' => $totalVentes
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Service\Impl;
 
+use App\DTO\MenuDTO;
 use App\Repository\MenuRepository;
 use App\Service\MenuServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,8 +21,8 @@ class MenuServiceImpl implements MenuServiceInterface
         $menus = [];
         foreach ($paginator as $result) {
             $menu = $result[0];
-            $menu->total_ventes = $result['total_ventes'];
-            $menus[] = $menu;
+            $totalVentes = (int) $result['total_ventes'];
+            $menus[] = MenuDTO::fromEntity($menu, $totalVentes);
         }
 
         return [
@@ -58,10 +59,11 @@ class MenuServiceImpl implements MenuServiceInterface
         }
 
         $menu = $result[0];
+        $totalVentes = (int) $result['total_ventes'];
 
         return [
-            'menu' => $menu,
-            'total_ventes' => $result['total_ventes']
+            'menu' => MenuDTO::fromEntity($menu, $totalVentes),
+            'total_ventes' => $totalVentes
         ];
     }
 

@@ -2,6 +2,8 @@
 
 namespace App\Service\Impl;
 
+use App\DTO\CommandeDTO;
+use App\DTO\DetailCommandeDTO;
 use App\Repository\CommandeRepository;
 use App\Service\CommandeServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +17,8 @@ class CommandeServiceImpl implements CommandeServiceInterface
 
     public function getCommandesDuJour(): array
     {
-        return $this->commandeRepository->findCommandesDuJour();
+        $commandes = $this->commandeRepository->findCommandesDuJour();
+        return CommandeDTO::fromEntities($commandes);
     }
 
     public function getCommandesValidees(): int
@@ -35,15 +38,21 @@ class CommandeServiceImpl implements CommandeServiceInterface
 
     public function getCommandesRecentes(int $limit = 10): array
     {
-        return $this->commandeRepository->findRecentes($limit);
+        $commandes = $this->commandeRepository->findRecentes($limit);
+        return CommandeDTO::fromEntities($commandes);
     }
 
     public function listerCommandes(array $filters, int $page, int $limit): array
     {
         $paginator = $this->commandeRepository->findWithFilters($filters, $page, $limit);
 
+        $commandes = [];
+        foreach ($paginator as $commande) {
+            $commandes[] = CommandeDTO::fromEntity($commande);
+        }
+
         return [
-            'commandes' => iterator_to_array($paginator),
+            'commandes' => $commandes,
             'currentPage' => $page,
             'totalItems' => count($paginator),
             'totalPages' => ceil(count($paginator) / $limit),
@@ -71,31 +80,41 @@ class CommandeServiceImpl implements CommandeServiceInterface
         $menuRepo = $this->entityManager->getRepository('App\Entity\Menu');
         $complementRepo = $this->entityManager->getRepository('App\Entity\Complement');
 
-        $detailsAvecArticles = [];
+        $detailsDTO = [];
         foreach ($detailsCommande as $detail) {
-            $detailData = [
-                'detail' => $detail,
-                'article' => null
-            ];
+            $articleNom = null;
+            $articleImage = null;
 
             switch ($detail->getTypeArticle()) {
                 case 'BURGER':
-                    $detailData['article'] = $burgerRepo->find($detail->getIdArticle());
+                    $article = $burgerRepo->find($detail->getIdArticle());
+                    if ($article) {
+                        $articleNom = $article->getNom();
+                        $articleImage = $article->getImage();
+                    }
                     break;
                 case 'MENU':
-                    $detailData['article'] = $menuRepo->find($detail->getIdArticle());
+                    $article = $menuRepo->find($detail->getIdArticle());
+                    if ($article) {
+                        $articleNom = $article->getNom();
+                        $articleImage = $article->getImage();
+                    }
                     break;
                 case 'COMPLEMENT':
-                    $detailData['article'] = $complementRepo->find($detail->getIdArticle());
+                    $article = $complementRepo->find($detail->getIdArticle());
+                    if ($article) {
+                        $articleNom = $article->getNom();
+                        $articleImage = $article->getImage();
+                    }
                     break;
             }
 
-            $detailsAvecArticles[] = $detailData;
+            $detailsDTO[] = DetailCommandeDTO::fromEntity($detail, $articleNom, $articleImage);
         }
 
         return [
-            'commande' => $commande,
-            'details' => $detailsAvecArticles
+            'commande' => CommandeDTO::fromEntity($commande),
+            'details' => $detailsDTO
         ];
     }
 

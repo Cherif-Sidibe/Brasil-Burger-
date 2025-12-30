@@ -2,6 +2,7 @@
 
 namespace App\Service\Impl;
 
+use App\DTO\ComplementDTO;
 use App\Repository\ComplementRepository;
 use App\Service\ComplementServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,8 +21,8 @@ class ComplementServiceImpl implements ComplementServiceInterface
         $complements = [];
         foreach ($paginator as $result) {
             $complement = $result[0];
-            $complement->total_ventes = $result['total_ventes'];
-            $complements[] = $complement;
+            $totalVentes = (int) $result['total_ventes'];
+            $complements[] = ComplementDTO::fromEntity($complement, $totalVentes);
         }
 
         return [
@@ -52,10 +53,11 @@ class ComplementServiceImpl implements ComplementServiceInterface
         }
 
         $complement = $result[0];
+        $totalVentes = (int) $result['total_ventes'];
 
         return [
-            'complement' => $complement,
-            'total_ventes' => $result['total_ventes']
+            'complement' => ComplementDTO::fromEntity($complement, $totalVentes),
+            'total_ventes' => $totalVentes
         ];
     }
 

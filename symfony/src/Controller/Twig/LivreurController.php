@@ -2,6 +2,9 @@
 
 namespace App\Controller\Twig;
 
+use App\DTO\CommandeDTO;
+use App\DTO\UserDTO;
+use App\DTO\ZoneDTO;
 use App\Entity\Commande;
 use App\Entity\User;
 use App\Entity\Zone;
@@ -28,7 +31,7 @@ class LivreurController extends AbstractController
     public function liste(Request $request): Response
     {
         // Récupérer tous les livreurs actifs
-        $livreurs = $this->userRepository->createQueryBuilder('u')
+        $livreursEntities = $this->userRepository->createQueryBuilder('u')
             ->where('u.role = :role')
             ->andWhere('u.isArchive = false')
             ->setParameter('role', User::ROLE_LIVREUR)
@@ -36,6 +39,8 @@ class LivreurController extends AbstractController
             ->addOrderBy('u.prenom', 'ASC')
             ->getQuery()
             ->getResult();
+
+        $livreurs = UserDTO::fromEntities($livreursEntities);
 
         // Récupérer les commandes en attente de livreur (type A_LIVRER sans livreur assigné)
         $commandesEnAttente = $this->commandeRepository->createQueryBuilder('c')
@@ -58,11 +63,12 @@ class LivreurController extends AbstractController
             if (!isset($commandesParZone[$zoneName])) {
                 $commandesParZone[$zoneName] = [];
             }
-            $commandesParZone[$zoneName][] = $commande;
+            $commandesParZone[$zoneName][] = CommandeDTO::fromEntity($commande);
         }
 
         // Récupérer toutes les zones actives
-        $zones = $this->entityManager->getRepository(Zone::class)->findBy(['isArchive' => false], ['nom' => 'ASC']);
+        $zonesEntities = $this->entityManager->getRepository(Zone::class)->findBy(['isArchive' => false], ['nom' => 'ASC']);
+        $zones = ZoneDTO::fromEntities($zonesEntities);
 
         return $this->render('gestionnaire/livreurs/liste.html.twig', [
             'livreurs' => $livreurs,
